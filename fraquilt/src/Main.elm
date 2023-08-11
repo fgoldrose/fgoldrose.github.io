@@ -1,6 +1,7 @@
 module Main exposing (Flags, Model(..), Msg(..), main)
 
 import Browser
+import FadeBorders
 import Html exposing (Html)
 import Leafy
 import Spirally
@@ -13,6 +14,7 @@ type FraquiltVariety
     | Wiggly
     | Windows
     | Spirally
+    | FadeBorders
 
 
 type Model
@@ -20,6 +22,7 @@ type Model
     | WigglyModel Wiggly.Model
     | WindowsModel Windows.Model
     | SpirallyModel Spirally.Model
+    | FadeBordersModel FadeBorders.Model
 
 
 type Msg
@@ -27,6 +30,7 @@ type Msg
     | WigglyMsg Wiggly.Msg
     | WindowsMsg Windows.Msg
     | SpirallyMsg Spirally.Msg
+    | FadeBordersMsg FadeBorders.Msg
 
 
 view : Model -> Html Msg
@@ -43,6 +47,9 @@ view model =
 
         SpirallyModel subModel ->
             Spirally.view subModel |> Html.map SpirallyMsg
+
+        FadeBordersModel subModel ->
+            FadeBorders.view subModel |> Html.map FadeBordersMsg
 
 
 type alias Flags =
@@ -68,6 +75,10 @@ init variety flags =
             Spirally.init flags
                 |> Tuple.mapBoth SpirallyModel (Cmd.map SpirallyMsg)
 
+        FadeBorders ->
+            FadeBorders.init flags
+                |> Tuple.mapBoth FadeBordersModel (Cmd.map FadeBordersMsg)
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -83,6 +94,9 @@ subscriptions model =
 
         SpirallyModel subModel ->
             Spirally.subscriptions subModel |> Sub.map SpirallyMsg
+
+        FadeBordersModel subModel ->
+            FadeBorders.subscriptions subModel |> Sub.map FadeBordersMsg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -104,6 +118,10 @@ update msg model =
             Spirally.update subMsg subModel
                 |> Tuple.mapBoth SpirallyModel (Cmd.map SpirallyMsg)
 
+        ( FadeBordersMsg subMsg, FadeBordersModel subModel ) ->
+            FadeBorders.update subMsg subModel
+                |> Tuple.mapBoth FadeBordersModel (Cmd.map FadeBordersMsg)
+
         _ ->
             ( model, Cmd.none )
 
@@ -111,7 +129,7 @@ update msg model =
 main : Program Flags Model Msg
 main =
     Browser.element
-        { init = init Spirally
+        { init = init FadeBorders
         , view = view
         , update = update
         , subscriptions = subscriptions
