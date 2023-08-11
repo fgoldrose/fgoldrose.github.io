@@ -4453,7 +4453,7 @@ function _Time_getZoneName()
 		callback(_Scheduler_succeed(name));
 	});
 }
-var $author$project$Main$Windows = {$: 'Windows'};
+var $author$project$Main$Spirally = {$: 'Spirally'};
 var $elm$core$List$cons = _List_cons;
 var $elm$core$Elm$JsArray$foldr = _JsArray_foldr;
 var $elm$core$Array$foldr = F3(
@@ -5251,6 +5251,12 @@ var $author$project$Main$LeafyModel = function (a) {
 var $author$project$Main$LeafyMsg = function (a) {
 	return {$: 'LeafyMsg', a: a};
 };
+var $author$project$Main$SpirallyModel = function (a) {
+	return {$: 'SpirallyModel', a: a};
+};
+var $author$project$Main$SpirallyMsg = function (a) {
+	return {$: 'SpirallyMsg', a: a};
+};
 var $author$project$Main$WigglyModel = function (a) {
 	return {$: 'WigglyModel', a: a};
 };
@@ -5615,6 +5621,66 @@ var $author$project$Leafy$init = function (flags) {
 		{borderParams: borderParams, colorParams: colorParams, doNextAnimationFrame: _List_Nil, iteration: 0, level: level, levelAnimationDirection: $author$project$Leafy$Up, numberOfVariables: numberOfVariables, randomSeed: seed2},
 		$elm$core$Platform$Cmd$none);
 };
+var $author$project$Spirally$Up = {$: 'Up'};
+var $author$project$Spirally$maxLevel = 7;
+var $author$project$Spirally$randomVariables = function (n) {
+	return A2(
+		$elm$random$Random$list,
+		n,
+		A2($elm$random$Random$int, 0, 255));
+};
+var $author$project$Spirally$Adjustments = F4(
+	function (tl, tr, bl, br) {
+		return {bl: bl, br: br, tl: tl, tr: tr};
+	});
+var $author$project$Spirally$randomListShuffleFunction = function (listLength) {
+	return A2(
+		$elm$random$Random$map,
+		function (listOfIndices) {
+			return function (listInput) {
+				return A2(
+					$elm$core$List$indexedMap,
+					F2(
+						function (index, item) {
+							var swapInput = A2(
+								$elm$core$Maybe$withDefault,
+								index,
+								A2($elm_community$list_extra$List$Extra$getAt, index, listOfIndices));
+							return A2(
+								$elm$core$Maybe$withDefault,
+								item,
+								A2($elm_community$list_extra$List$Extra$getAt, swapInput, listInput));
+						}),
+					listInput);
+			};
+		},
+		$elm_community$random_extra$Random$List$shuffle(
+			A2($elm$core$List$range, 0, listLength - 1)));
+};
+var $author$project$Spirally$randomizeAdjustments = function (listLength) {
+	var randomList = $author$project$Spirally$randomListShuffleFunction(listLength);
+	return A5($elm$random$Random$map4, $author$project$Spirally$Adjustments, randomList, randomList, randomList, randomList);
+};
+var $author$project$Spirally$init = function (flags) {
+	var seed = $elm$random$Random$initialSeed(flags.randomSeed);
+	var numberOfVariables = 7;
+	var level = $author$project$Spirally$maxLevel;
+	var _v0 = A2(
+		$elm$random$Random$step,
+		$author$project$Spirally$randomizeAdjustments(numberOfVariables),
+		seed);
+	var adjustments = _v0.a;
+	var seedAfterAdustments = _v0.b;
+	var _v1 = A2(
+		$elm$random$Random$step,
+		$author$project$Spirally$randomVariables(numberOfVariables),
+		seedAfterAdustments);
+	var newInitialColor = _v1.a;
+	var seedAfterColor = _v1.b;
+	return _Utils_Tuple2(
+		{adjustments: adjustments, doNextAnimationFrame: _List_Nil, initialVariables: newInitialColor, iteration: 0, level: level, levelAnimationDirection: $author$project$Spirally$Up, numberOfVariables: numberOfVariables, randomSeed: seedAfterColor},
+		$elm$core$Platform$Cmd$none);
+};
 var $author$project$Wiggly$Up = {$: 'Up'};
 var $author$project$Wiggly$maxLevel = 6;
 var $author$project$Wiggly$randomVariables = function (n) {
@@ -5785,12 +5851,18 @@ var $author$project$Main$init = F2(
 					$author$project$Main$WigglyModel,
 					$elm$core$Platform$Cmd$map($author$project$Main$WigglyMsg),
 					$author$project$Wiggly$init(flags));
-			default:
+			case 'Windows':
 				return A3(
 					$elm$core$Tuple$mapBoth,
 					$author$project$Main$WindowsModel,
 					$elm$core$Platform$Cmd$map($author$project$Main$WindowsMsg),
 					$author$project$Windows$init(flags));
+			default:
+				return A3(
+					$elm$core$Tuple$mapBoth,
+					$author$project$Main$SpirallyModel,
+					$elm$core$Platform$Cmd$map($author$project$Main$SpirallyMsg),
+					$author$project$Spirally$init(flags));
 		}
 	});
 var $elm$json$Json$Decode$int = _Json_decodeInt;
@@ -5798,6 +5870,9 @@ var $elm$core$Platform$Sub$map = _Platform_map;
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Leafy$subscriptions = function (_v0) {
+	return $elm$core$Platform$Sub$none;
+};
+var $author$project$Spirally$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$none;
 };
 var $author$project$Wiggly$RandomizeBorder = {$: 'RandomizeBorder'};
@@ -6373,12 +6448,18 @@ var $author$project$Main$subscriptions = function (model) {
 				$elm$core$Platform$Sub$map,
 				$author$project$Main$WigglyMsg,
 				$author$project$Wiggly$subscriptions(subModel));
-		default:
+		case 'WindowsModel':
 			var subModel = model.a;
 			return A2(
 				$elm$core$Platform$Sub$map,
 				$author$project$Main$WindowsMsg,
 				$author$project$Windows$subscriptions(subModel));
+		default:
+			var subModel = model.a;
+			return A2(
+				$elm$core$Platform$Sub$map,
+				$author$project$Main$SpirallyMsg,
+				$author$project$Spirally$subscriptions(subModel));
 	}
 };
 var $elm$json$Json$Encode$string = _Json_wrap;
@@ -6627,6 +6708,134 @@ var $author$project$Leafy$update = F2(
 				model,
 				{borderParams: memoizeBorders, colorParams: memoizeColors, iteration: model.iteration + 1, randomSeed: seed2}),
 			$elm$core$Platform$Cmd$none);
+	});
+var $author$project$Spirally$AnimateLevel = {$: 'AnimateLevel'};
+var $author$project$Spirally$Down = {$: 'Down'};
+var $author$project$Spirally$None = {$: 'None'};
+var $author$project$Spirally$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'Randomize':
+				var _v1 = A2(
+					$elm$random$Random$step,
+					$author$project$Spirally$randomizeAdjustments(model.numberOfVariables),
+					model.randomSeed);
+				var randomizedAdjustments = _v1.a;
+				var seedAfterAdustments = _v1.b;
+				var _v2 = A2(
+					$elm$random$Random$step,
+					$author$project$Spirally$randomVariables(model.numberOfVariables),
+					seedAfterAdustments);
+				var newInitialColor = _v2.a;
+				var newSeed = _v2.b;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{adjustments: randomizedAdjustments, initialVariables: newInitialColor, iteration: model.iteration + 1, randomSeed: newSeed}),
+					$elm$core$Platform$Cmd$none);
+			case 'AnimateLevel':
+				var changeLevel = F2(
+					function (dir, m) {
+						switch (dir.$) {
+							case 'Up':
+								return _Utils_update(
+									m,
+									{level: m.level + 1});
+							case 'Down':
+								return _Utils_update(
+									m,
+									{level: m.level - 1});
+							default:
+								return m;
+						}
+					});
+				if (_Utils_eq(model.level, $author$project$Spirally$maxLevel)) {
+					return _Utils_Tuple2(
+						_Utils_eq(model.levelAnimationDirection, $author$project$Spirally$None) ? A2(
+							changeLevel,
+							$author$project$Spirally$Down,
+							_Utils_update(
+								model,
+								{
+									doNextAnimationFrame: _Utils_ap(
+										model.doNextAnimationFrame,
+										_List_fromArray(
+											[$author$project$Spirally$AnimateLevel])),
+									levelAnimationDirection: $author$project$Spirally$Down
+								})) : _Utils_update(
+							model,
+							{levelAnimationDirection: $author$project$Spirally$None}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					if (_Utils_eq(model.level, -1)) {
+						var _v3 = model.levelAnimationDirection;
+						if (_v3.$ === 'Down') {
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{levelAnimationDirection: $author$project$Spirally$Up}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(
+								A2(
+									changeLevel,
+									$author$project$Spirally$Up,
+									_Utils_update(
+										model,
+										{
+											doNextAnimationFrame: _Utils_ap(
+												model.doNextAnimationFrame,
+												_List_fromArray(
+													[$author$project$Spirally$AnimateLevel])),
+											levelAnimationDirection: $author$project$Spirally$Up
+										})),
+								$elm$core$Platform$Cmd$none);
+						}
+					} else {
+						return _Utils_Tuple2(
+							A2(
+								changeLevel,
+								model.levelAnimationDirection,
+								_Utils_update(
+									model,
+									{
+										doNextAnimationFrame: _Utils_ap(
+											model.doNextAnimationFrame,
+											_List_fromArray(
+												[$author$project$Spirally$AnimateLevel]))
+									})),
+							$elm$core$Platform$Cmd$none);
+					}
+				}
+			case 'DoNextAnimationFrame':
+				var doMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							doNextAnimationFrame: _Utils_ap(
+								model.doNextAnimationFrame,
+								_List_fromArray(
+									[doMsg]))
+						}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var _v5 = model.doNextAnimationFrame;
+				if (_v5.b) {
+					var first = _v5.a;
+					var rest = _v5.b;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{doNextAnimationFrame: rest}),
+						A2(
+							$elm$core$Task$perform,
+							$elm$core$Basics$identity,
+							$elm$core$Task$succeed(first)));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+		}
 	});
 var $author$project$Wiggly$configToBorderStyle = function (list) {
 	if (((list.b && list.b.b) && list.b.b.b) && list.b.b.b.b) {
@@ -6897,144 +7106,54 @@ var $author$project$Wiggly$update = F2(
 				$elm$core$Platform$Cmd$none);
 		}
 	});
-var $author$project$Windows$AnimateLevel = {$: 'AnimateLevel'};
-var $author$project$Windows$Down = {$: 'Down'};
-var $author$project$Windows$None = {$: 'None'};
 var $author$project$Windows$update = F2(
 	function (msg, model) {
-		switch (msg.$) {
-			case 'Randomize':
-				var _v1 = A2(
-					$elm$random$Random$step,
-					$author$project$Windows$randomizeAdjustments(model.numberOfVariables),
-					model.randomSeed);
-				var randomizedAdjustments = _v1.a;
-				var seedAfterAdustments = _v1.b;
-				var _v2 = A2(
-					$elm$random$Random$step,
-					$author$project$Windows$randomizeAdjustments(4),
-					seedAfterAdustments);
-				var borderAdjustments = _v2.a;
-				var seedAfterBorderAdjustments = _v2.b;
-				var _v3 = A2(
-					$elm$random$Random$step,
-					$author$project$Windows$randomVariables(model.numberOfVariables),
-					seedAfterBorderAdjustments);
-				var newInitialColor = _v3.a;
-				var newSeed = _v3.b;
+		if (msg.$ === 'Randomize') {
+			var _v1 = A2(
+				$elm$random$Random$step,
+				$author$project$Windows$randomizeAdjustments(model.numberOfVariables),
+				model.randomSeed);
+			var randomizedAdjustments = _v1.a;
+			var seedAfterAdustments = _v1.b;
+			var _v2 = A2(
+				$elm$random$Random$step,
+				$author$project$Windows$randomizeAdjustments(4),
+				seedAfterAdustments);
+			var borderAdjustments = _v2.a;
+			var seedAfterBorderAdjustments = _v2.b;
+			var _v3 = A2(
+				$elm$random$Random$step,
+				$author$project$Windows$randomVariables(model.numberOfVariables),
+				seedAfterBorderAdjustments);
+			var newInitialColor = _v3.a;
+			var newSeed = _v3.b;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{adjustments: randomizedAdjustments, borderAdjustments: borderAdjustments, initialVariables: newInitialColor, iteration: model.iteration + 1, randomSeed: newSeed}),
+				$elm$core$Platform$Cmd$none);
+		} else {
+			var _v4 = model.doNextAnimationFrame;
+			if (_v4.b) {
+				var first = _v4.a;
+				var rest = _v4.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{adjustments: randomizedAdjustments, borderAdjustments: borderAdjustments, initialVariables: newInitialColor, iteration: model.iteration + 1, randomSeed: newSeed}),
-					$elm$core$Platform$Cmd$none);
-			case 'AnimateLevel':
-				var changeLevel = F2(
-					function (dir, m) {
-						switch (dir.$) {
-							case 'Up':
-								return _Utils_update(
-									m,
-									{level: m.level + 1});
-							case 'Down':
-								return _Utils_update(
-									m,
-									{level: m.level - 1});
-							default:
-								return m;
-						}
-					});
-				if (_Utils_eq(model.level, $author$project$Windows$maxLevel)) {
-					return _Utils_Tuple2(
-						_Utils_eq(model.levelAnimationDirection, $author$project$Windows$None) ? A2(
-							changeLevel,
-							$author$project$Windows$Down,
-							_Utils_update(
-								model,
-								{
-									doNextAnimationFrame: _Utils_ap(
-										model.doNextAnimationFrame,
-										_List_fromArray(
-											[$author$project$Windows$AnimateLevel])),
-									levelAnimationDirection: $author$project$Windows$Down
-								})) : _Utils_update(
-							model,
-							{levelAnimationDirection: $author$project$Windows$None}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					if (_Utils_eq(model.level, -1)) {
-						var _v4 = model.levelAnimationDirection;
-						if (_v4.$ === 'Down') {
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{levelAnimationDirection: $author$project$Windows$Up}),
-								$elm$core$Platform$Cmd$none);
-						} else {
-							return _Utils_Tuple2(
-								A2(
-									changeLevel,
-									$author$project$Windows$Up,
-									_Utils_update(
-										model,
-										{
-											doNextAnimationFrame: _Utils_ap(
-												model.doNextAnimationFrame,
-												_List_fromArray(
-													[$author$project$Windows$AnimateLevel])),
-											levelAnimationDirection: $author$project$Windows$Up
-										})),
-								$elm$core$Platform$Cmd$none);
-						}
-					} else {
-						return _Utils_Tuple2(
-							A2(
-								changeLevel,
-								model.levelAnimationDirection,
-								_Utils_update(
-									model,
-									{
-										doNextAnimationFrame: _Utils_ap(
-											model.doNextAnimationFrame,
-											_List_fromArray(
-												[$author$project$Windows$AnimateLevel]))
-									})),
-							$elm$core$Platform$Cmd$none);
-					}
-				}
-			case 'DoNextAnimationFrame':
-				var doMsg = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							doNextAnimationFrame: _Utils_ap(
-								model.doNextAnimationFrame,
-								_List_fromArray(
-									[doMsg]))
-						}),
-					$elm$core$Platform$Cmd$none);
-			default:
-				var _v6 = model.doNextAnimationFrame;
-				if (_v6.b) {
-					var first = _v6.a;
-					var rest = _v6.b;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{doNextAnimationFrame: rest}),
-						A2(
-							$elm$core$Task$perform,
-							$elm$core$Basics$identity,
-							$elm$core$Task$succeed(first)));
-				} else {
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				}
+						{doNextAnimationFrame: rest}),
+					A2(
+						$elm$core$Task$perform,
+						$elm$core$Basics$identity,
+						$elm$core$Task$succeed(first)));
+			} else {
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			}
 		}
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		var _v0 = _Utils_Tuple2(msg, model);
-		_v0$3:
+		_v0$4:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'LeafyMsg':
@@ -7047,7 +7166,7 @@ var $author$project$Main$update = F2(
 							$elm$core$Platform$Cmd$map($author$project$Main$LeafyMsg),
 							A2($author$project$Leafy$update, subMsg, subModel));
 					} else {
-						break _v0$3;
+						break _v0$4;
 					}
 				case 'WigglyMsg':
 					if (_v0.b.$ === 'WigglyModel') {
@@ -7059,9 +7178,9 @@ var $author$project$Main$update = F2(
 							$elm$core$Platform$Cmd$map($author$project$Main$WigglyMsg),
 							A2($author$project$Wiggly$update, subMsg, subModel));
 					} else {
-						break _v0$3;
+						break _v0$4;
 					}
-				default:
+				case 'WindowsMsg':
 					if (_v0.b.$ === 'WindowsModel') {
 						var subMsg = _v0.a.a;
 						var subModel = _v0.b.a;
@@ -7071,7 +7190,19 @@ var $author$project$Main$update = F2(
 							$elm$core$Platform$Cmd$map($author$project$Main$WindowsMsg),
 							A2($author$project$Windows$update, subMsg, subModel));
 					} else {
-						break _v0$3;
+						break _v0$4;
+					}
+				default:
+					if (_v0.b.$ === 'SpirallyModel') {
+						var subMsg = _v0.a.a;
+						var subModel = _v0.b.a;
+						return A3(
+							$elm$core$Tuple$mapBoth,
+							$author$project$Main$SpirallyModel,
+							$elm$core$Platform$Cmd$map($author$project$Main$SpirallyMsg),
+							A2($author$project$Spirally$update, subMsg, subModel));
+					} else {
+						break _v0$4;
 					}
 			}
 		}
@@ -7159,6 +7290,238 @@ var $author$project$Leafy$view = function (model) {
 						$elm$html$Html$Events$onClick($author$project$Leafy$Randomize)
 					]),
 				$author$project$Leafy$viewFrameworks(model))
+			]));
+};
+var $author$project$Spirally$Randomize = {$: 'Randomize'};
+var $author$project$Spirally$cssStyles = '\ndiv {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n#container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $author$project$Spirally$borderRadiusString = function (i) {
+	return function (x) {
+		return $elm$core$String$fromFloat((x / 255) * 100) + '%';
+	}(
+		A2($elm$core$Maybe$withDefault, 0, i));
+};
+var $author$project$Spirally$configToRbgString = function (list) {
+	if ((list.b && list.b.b) && list.b.b.b) {
+		var r = list.a;
+		var _v1 = list.b;
+		var g = _v1.a;
+		var _v2 = _v1.b;
+		var b = _v2.a;
+		return 'rgb(' + ($elm$core$String$fromInt(r) + (',' + ($elm$core$String$fromInt(g) + (',' + ($elm$core$String$fromInt(b) + ')')))));
+	} else {
+		return 'rgb(0,0,0)';
+	}
+};
+var $elm$core$Dict$singleton = F2(
+	function (key, value) {
+		return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
+	});
+var $author$project$Spirally$generateImage = F6(
+	function (adjustments, memoized, level, pathKey, currentPosition, config) {
+		if (!level) {
+			return _Utils_Tuple2(
+				A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('box'),
+							$elm$html$Html$Attributes$class(currentPosition),
+							$elm$html$Html$Attributes$id(pathKey),
+							A2(
+							$elm$html$Html$Attributes$style,
+							'background-color',
+							$author$project$Spirally$configToRbgString(config)),
+							A2(
+							$elm$html$Html$Attributes$style,
+							'border-top-left-radius',
+							$author$project$Spirally$borderRadiusString(
+								A2($elm_community$list_extra$List$Extra$getAt, 3, config))),
+							A2(
+							$elm$html$Html$Attributes$style,
+							'border-top-right-radius',
+							$author$project$Spirally$borderRadiusString(
+								A2($elm_community$list_extra$List$Extra$getAt, 4, config))),
+							A2(
+							$elm$html$Html$Attributes$style,
+							'border-bottom-left-radius',
+							$author$project$Spirally$borderRadiusString(
+								A2($elm_community$list_extra$List$Extra$getAt, 5, config))),
+							A2(
+							$elm$html$Html$Attributes$style,
+							'border-bottom-right-radius',
+							$author$project$Spirally$borderRadiusString(
+								A2($elm_community$list_extra$List$Extra$getAt, 6, config)))
+						]),
+					_List_Nil),
+				memoized);
+		} else {
+			var wrapImages = function (subImages) {
+				return A3(
+					$elm$html$Html$Keyed$node,
+					'div',
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('box'),
+							$elm$html$Html$Attributes$class(currentPosition),
+							A2(
+							$elm$html$Html$Attributes$style,
+							'background-color',
+							$author$project$Spirally$configToRbgString(config))
+						]),
+					_List_fromArray(
+						[
+							_Utils_Tuple2(
+							pathKey + '-outer',
+							A3(
+								$elm$html$Html$Keyed$node,
+								'div',
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('outer'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'border-top-left-radius',
+										$author$project$Spirally$borderRadiusString(
+											A2($elm_community$list_extra$List$Extra$getAt, 3, config))),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'border-top-right-radius',
+										$author$project$Spirally$borderRadiusString(
+											A2($elm_community$list_extra$List$Extra$getAt, 4, config))),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'border-bottom-left-radius',
+										$author$project$Spirally$borderRadiusString(
+											A2($elm_community$list_extra$List$Extra$getAt, 5, config))),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'border-bottom-right-radius',
+										$author$project$Spirally$borderRadiusString(
+											A2($elm_community$list_extra$List$Extra$getAt, 6, config)))
+									]),
+								subImages))
+						]));
+			};
+			var generateImageLevel = function (configs) {
+				var _v4 = A6($author$project$Spirally$generateImage, adjustments, memoized, level - 1, pathKey + '-tl', 'tl', configs.tl);
+				var tlImage = _v4.a;
+				var memoized2 = _v4.b;
+				var _v5 = A6($author$project$Spirally$generateImage, adjustments, memoized2, level - 1, pathKey + '-tr', 'tr', configs.tr);
+				var trImage = _v5.a;
+				var memoized3 = _v5.b;
+				var _v6 = A6($author$project$Spirally$generateImage, adjustments, memoized3, level - 1, pathKey + '-bl', 'bl', configs.bl);
+				var blImage = _v6.a;
+				var memoized4 = _v6.b;
+				var _v7 = A6($author$project$Spirally$generateImage, adjustments, memoized4, level - 1, pathKey + '-br', 'br', configs.br);
+				var brImage = _v7.a;
+				var memoized5 = _v7.b;
+				return _Utils_Tuple2(
+					wrapImages(
+						_List_fromArray(
+							[
+								_Utils_Tuple2(pathKey + '-tl', tlImage),
+								_Utils_Tuple2(pathKey + '-tr', trImage),
+								_Utils_Tuple2(pathKey + '-bl', blImage),
+								_Utils_Tuple2(pathKey + '-br', brImage)
+							])),
+					memoized5);
+			};
+			var _v0 = A2($elm$core$Dict$get, config, memoized);
+			if (_v0.$ === 'Just') {
+				var adjust = _v0.a.adjust;
+				var levelImages = _v0.a.levelImages;
+				var _v1 = A2($elm$core$Dict$get, level, levelImages);
+				if (_v1.$ === 'Just') {
+					var image = _v1.a;
+					return _Utils_Tuple2(image, memoized);
+				} else {
+					var _v2 = generateImageLevel(adjust);
+					var image = _v2.a;
+					var returnedMemoized = _v2.b;
+					var newMemoized = A3(
+						$elm$core$Dict$insert,
+						config,
+						{
+							adjust: adjust,
+							levelImages: A3($elm$core$Dict$insert, level, image, levelImages)
+						},
+						returnedMemoized);
+					return _Utils_Tuple2(image, newMemoized);
+				}
+			} else {
+				var adjust = {
+					bl: adjustments.bl(config),
+					br: adjustments.br(config),
+					tl: adjustments.tl(config),
+					tr: adjustments.tr(config)
+				};
+				var _v3 = generateImageLevel(adjust);
+				var image = _v3.a;
+				var returnedMemoized = _v3.b;
+				var newMemoized = A3(
+					$elm$core$Dict$insert,
+					config,
+					{
+						adjust: adjust,
+						levelImages: A2($elm$core$Dict$singleton, level, image)
+					},
+					returnedMemoized);
+				return _Utils_Tuple2(image, newMemoized);
+			}
+		}
+	});
+var $author$project$Spirally$viewFrameworks = function (model) {
+	return _List_fromArray(
+		[
+			_Utils_Tuple2(
+			$elm$core$String$fromInt(model.iteration),
+			A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+						A2($elm$html$Html$Attributes$style, 'top', '0'),
+						A2($elm$html$Html$Attributes$style, 'bottom', '0'),
+						A2($elm$html$Html$Attributes$style, 'right', '0'),
+						A2($elm$html$Html$Attributes$style, 'left', '0')
+					]),
+				_List_fromArray(
+					[
+						A6(
+						$author$project$Spirally$generateImage,
+						model.adjustments,
+						$elm$core$Dict$empty,
+						$author$project$Spirally$maxLevel,
+						'level-' + $elm$core$String$fromInt($author$project$Spirally$maxLevel),
+						'outer',
+						model.initialVariables).a
+					])))
+		]);
+};
+var $author$project$Spirally$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A3(
+				$elm$html$Html$node,
+				'style',
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text($author$project$Spirally$cssStyles)
+					])),
+				A3(
+				$elm$html$Html$Keyed$node,
+				'div',
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$id('container'),
+						$elm$html$Html$Events$onClick($author$project$Spirally$Randomize)
+					]),
+				$author$project$Spirally$viewFrameworks(model))
 			]));
 };
 var $author$project$Wiggly$Randomize = {$: 'Randomize'};
@@ -7497,17 +7860,23 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$map,
 				$author$project$Main$WigglyMsg,
 				$author$project$Wiggly$view(subModel));
-		default:
+		case 'WindowsModel':
 			var subModel = model.a;
 			return A2(
 				$elm$html$Html$map,
 				$author$project$Main$WindowsMsg,
 				$author$project$Windows$view(subModel));
+		default:
+			var subModel = model.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$SpirallyMsg,
+				$author$project$Spirally$view(subModel));
 	}
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{
-		init: $author$project$Main$init($author$project$Main$Windows),
+		init: $author$project$Main$init($author$project$Main$Spirally),
 		subscriptions: $author$project$Main$subscriptions,
 		update: $author$project$Main$update,
 		view: $author$project$Main$view

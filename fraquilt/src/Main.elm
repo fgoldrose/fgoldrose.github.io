@@ -3,6 +3,7 @@ module Main exposing (Flags, Model(..), Msg(..), main)
 import Browser
 import Html exposing (Html)
 import Leafy
+import Spirally
 import Wiggly
 import Windows
 
@@ -11,18 +12,21 @@ type FraquiltVariety
     = Leafy
     | Wiggly
     | Windows
+    | Spirally
 
 
 type Model
     = LeafyModel Leafy.Model
     | WigglyModel Wiggly.Model
     | WindowsModel Windows.Model
+    | SpirallyModel Spirally.Model
 
 
 type Msg
     = LeafyMsg Leafy.Msg
     | WigglyMsg Wiggly.Msg
     | WindowsMsg Windows.Msg
+    | SpirallyMsg Spirally.Msg
 
 
 view : Model -> Html Msg
@@ -36,6 +40,9 @@ view model =
 
         WindowsModel subModel ->
             Windows.view subModel |> Html.map WindowsMsg
+
+        SpirallyModel subModel ->
+            Spirally.view subModel |> Html.map SpirallyMsg
 
 
 type alias Flags =
@@ -57,6 +64,10 @@ init variety flags =
             Windows.init flags
                 |> Tuple.mapBoth WindowsModel (Cmd.map WindowsMsg)
 
+        Spirally ->
+            Spirally.init flags
+                |> Tuple.mapBoth SpirallyModel (Cmd.map SpirallyMsg)
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -69,6 +80,9 @@ subscriptions model =
 
         WindowsModel subModel ->
             Windows.subscriptions subModel |> Sub.map WindowsMsg
+
+        SpirallyModel subModel ->
+            Spirally.subscriptions subModel |> Sub.map SpirallyMsg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -86,6 +100,10 @@ update msg model =
             Windows.update subMsg subModel
                 |> Tuple.mapBoth WindowsModel (Cmd.map WindowsMsg)
 
+        ( SpirallyMsg subMsg, SpirallyModel subModel ) ->
+            Spirally.update subMsg subModel
+                |> Tuple.mapBoth SpirallyModel (Cmd.map SpirallyMsg)
+
         _ ->
             ( model, Cmd.none )
 
@@ -93,7 +111,7 @@ update msg model =
 main : Program Flags Model Msg
 main =
     Browser.element
-        { init = init Windows
+        { init = init Spirally
         , view = view
         , update = update
         , subscriptions = subscriptions
