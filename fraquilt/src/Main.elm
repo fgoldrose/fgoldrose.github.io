@@ -1,5 +1,6 @@
 module Main exposing (Flags, Model(..), Msg(..), main)
 
+import Basic
 import Browser
 import Css
 import FadeBorders
@@ -19,6 +20,7 @@ type FraquiltVariety
     | Windows
     | Spirally
     | FadeBorders
+    | Basic
 
 
 type Model
@@ -27,6 +29,7 @@ type Model
     | WindowsModel Windows.Model
     | SpirallyModel Spirally.Model
     | FadeBordersModel FadeBorders.Model
+    | BasicModel Basic.Model
 
 
 type Msg
@@ -36,6 +39,32 @@ type Msg
     | WindowsMsg Windows.Msg
     | SpirallyMsg Spirally.Msg
     | FadeBordersMsg FadeBorders.Msg
+    | BasicMsg Basic.Msg
+
+
+isVariety : FraquiltVariety -> Model -> Bool
+isVariety variety model =
+    case ( variety, model ) of
+        ( Leafy, LeafyModel _ ) ->
+            True
+
+        ( Wiggly, WigglyModel _ ) ->
+            True
+
+        ( Windows, WindowsModel _ ) ->
+            True
+
+        ( Spirally, SpirallyModel _ ) ->
+            True
+
+        ( FadeBorders, FadeBordersModel _ ) ->
+            True
+
+        ( Basic, BasicModel _ ) ->
+            True
+
+        _ ->
+            False
 
 
 view : Model -> Html Msg
@@ -60,10 +89,14 @@ view model =
                         (\( variety, label ) ->
                             Html.button
                                 [ css
-                                    [ Css.backgroundColor (Css.hex "333333")
+                                    [ if isVariety variety model then
+                                        Css.backgroundColor (Css.hex "555555")
+
+                                      else
+                                        Css.backgroundColor (Css.hex "333333")
                                     , Css.color (Css.hex "ffffff")
                                     , Css.padding (Css.px 10)
-                                    , Css.hover [ Css.backgroundColor (Css.hex "444444") ]
+                                    , Css.hover [ Css.backgroundColor (Css.hex "555555") ]
                                     , Css.border (Css.px 0)
                                     , Css.cursor Css.pointer
                                     , Css.borderRadius (Css.px 8)
@@ -73,11 +106,12 @@ view model =
                                 ]
                                 [ Html.text label ]
                         )
-                        [ ( Leafy, "Leafy" )
-                        , ( Wiggly, "Wiggly" )
-                        , ( Windows, "Windows" )
-                        , ( Spirally, "Spirally" )
+                        [ ( Basic, "Basic" )
                         , ( FadeBorders, "Fade Borders" )
+                        , ( Windows, "Windows" )
+                        , ( Wiggly, "Wiggly" )
+                        , ( Leafy, "Leafy" )
+                        , ( Spirally, "Spirally" )
                         ]
                 )
 
@@ -97,6 +131,9 @@ view model =
 
                 FadeBordersModel subModel ->
                     FadeBorders.view subModel |> Html.fromUnstyled |> Html.map FadeBordersMsg
+
+                BasicModel subModel ->
+                    Basic.view subModel |> Html.fromUnstyled |> Html.map BasicMsg
     in
     Html.div
         [ css
@@ -144,6 +181,10 @@ init variety seed =
             FadeBorders.init seed
                 |> Tuple.mapBoth FadeBordersModel (Cmd.map FadeBordersMsg)
 
+        Basic ->
+            Basic.init seed
+                |> Tuple.mapBoth BasicModel (Cmd.map BasicMsg)
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -163,6 +204,9 @@ subscriptions model =
         FadeBordersModel subModel ->
             FadeBorders.subscriptions subModel |> Sub.map FadeBordersMsg
 
+        BasicModel subModel ->
+            Basic.subscriptions subModel |> Sub.map BasicMsg
+
 
 getRandomSeed : Model -> Random.Seed
 getRandomSeed model =
@@ -180,6 +224,9 @@ getRandomSeed model =
             subModel.randomSeed
 
         FadeBordersModel subModel ->
+            subModel.randomSeed
+
+        BasicModel subModel ->
             subModel.randomSeed
 
 
@@ -209,6 +256,10 @@ update msg model =
             FadeBorders.update subMsg subModel
                 |> Tuple.mapBoth FadeBordersModel (Cmd.map FadeBordersMsg)
 
+        ( BasicMsg subMsg, BasicModel subModel ) ->
+            Basic.update subMsg subModel
+                |> Tuple.mapBoth BasicModel (Cmd.map BasicMsg)
+
         _ ->
             ( model, Cmd.none )
 
@@ -224,7 +275,7 @@ main =
             \flags ->
                 flags.randomSeed
                     |> Random.initialSeed
-                    |> init FadeBorders
+                    |> init Basic
         , view = view >> Html.toUnstyled
         , update = update
         , subscriptions = subscriptions

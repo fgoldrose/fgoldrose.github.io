@@ -4453,7 +4453,7 @@ function _Time_getZoneName()
 		callback(_Scheduler_succeed(name));
 	});
 }
-var $author$project$Main$FadeBorders = {$: 'FadeBorders'};
+var $author$project$Main$Basic = {$: 'Basic'};
 var $elm$core$List$cons = _List_cons;
 var $elm$core$Elm$JsArray$foldr = _JsArray_foldr;
 var $elm$core$Array$foldr = F3(
@@ -5250,6 +5250,12 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$element = _Browser_element;
 var $elm$json$Json$Decode$field = _Json_decodeField;
+var $author$project$Main$BasicModel = function (a) {
+	return {$: 'BasicModel', a: a};
+};
+var $author$project$Main$BasicMsg = function (a) {
+	return {$: 'BasicMsg', a: a};
+};
 var $author$project$Main$FadeBordersModel = function (a) {
 	return {$: 'FadeBordersModel', a: a};
 };
@@ -5280,8 +5286,8 @@ var $author$project$Main$WindowsModel = function (a) {
 var $author$project$Main$WindowsMsg = function (a) {
 	return {$: 'WindowsMsg', a: a};
 };
-var $author$project$FadeBorders$AnimateLevel = {$: 'AnimateLevel'};
-var $author$project$FadeBorders$Up = {$: 'Up'};
+var $author$project$Basic$AnimateLevel = {$: 'AnimateLevel'};
+var $author$project$Basic$Up = {$: 'Up'};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$random$Random$Generator = function (a) {
@@ -5369,13 +5375,13 @@ var $elm$random$Random$list = F2(
 				return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
 			});
 	});
-var $author$project$FadeBorders$randomVariables = function (n) {
+var $author$project$Basic$randomVariables = function (n) {
 	return A2(
 		$elm$random$Random$list,
 		n,
 		A2($elm$random$Random$int, 0, 255));
 };
-var $author$project$FadeBorders$Adjustments = F4(
+var $author$project$Basic$Adjustments = F4(
 	function (tl, tr, bl, br) {
 		return {bl: bl, br: br, tl: tl, tr: tr};
 	});
@@ -5461,6 +5467,82 @@ var $elm$core$Maybe$withDefault = F2(
 			return _default;
 		}
 	});
+var $author$project$Basic$randomListShuffleFunction = function (listLength) {
+	return A2(
+		$elm$random$Random$map,
+		function (listOfIndices) {
+			return function (listInput) {
+				return A2(
+					$elm$core$List$indexedMap,
+					F2(
+						function (index, item) {
+							var swapInput = A2(
+								$elm$core$Maybe$withDefault,
+								index,
+								A2($elm_community$list_extra$List$Extra$getAt, index, listOfIndices));
+							return A2(
+								$elm$core$Maybe$withDefault,
+								item,
+								A2($elm_community$list_extra$List$Extra$getAt, swapInput, listInput));
+						}),
+					listInput);
+			};
+		},
+		A2(
+			$elm$random$Random$list,
+			listLength,
+			A2($elm$random$Random$int, 0, listLength - 1)));
+};
+var $author$project$Basic$randomizeAdjustments = function (listLength) {
+	var randomList = $author$project$Basic$randomListShuffleFunction(listLength);
+	return A5($elm$random$Random$map4, $author$project$Basic$Adjustments, randomList, randomList, randomList, randomList);
+};
+var $elm$random$Random$step = F2(
+	function (_v0, seed) {
+		var generator = _v0.a;
+		return generator(seed);
+	});
+var $author$project$Basic$init = function (seed) {
+	var numberOfVariables = 6;
+	var level = 0;
+	var _v0 = A2(
+		$elm$random$Random$step,
+		$author$project$Basic$randomizeAdjustments(numberOfVariables),
+		seed);
+	var adjustments = _v0.a;
+	var seedAfterAdustments = _v0.b;
+	var _v1 = A2(
+		$elm$random$Random$step,
+		$author$project$Basic$randomVariables(numberOfVariables),
+		seedAfterAdustments);
+	var newInitialColor = _v1.a;
+	var seedAfterColor = _v1.b;
+	return _Utils_Tuple2(
+		{
+			adjustments: adjustments,
+			doNextAnimationFrame: _List_fromArray(
+				[$author$project$Basic$AnimateLevel]),
+			initialVariables: newInitialColor,
+			iteration: 0,
+			level: level,
+			levelAnimationDirection: $author$project$Basic$Up,
+			numberOfVariables: numberOfVariables,
+			randomSeed: seedAfterColor
+		},
+		$elm$core$Platform$Cmd$none);
+};
+var $author$project$FadeBorders$AnimateLevel = {$: 'AnimateLevel'};
+var $author$project$FadeBorders$Up = {$: 'Up'};
+var $author$project$FadeBorders$randomVariables = function (n) {
+	return A2(
+		$elm$random$Random$list,
+		n,
+		A2($elm$random$Random$int, 0, 255));
+};
+var $author$project$FadeBorders$Adjustments = F4(
+	function (tl, tr, bl, br) {
+		return {bl: bl, br: br, tl: tl, tr: tr};
+	});
 var $author$project$FadeBorders$randomListShuffleFunction = function (listLength) {
 	return A2(
 		$elm$random$Random$map,
@@ -5491,11 +5573,6 @@ var $author$project$FadeBorders$randomizeAdjustments = function (listLength) {
 	var randomList = $author$project$FadeBorders$randomListShuffleFunction(listLength);
 	return A5($elm$random$Random$map4, $author$project$FadeBorders$Adjustments, randomList, randomList, randomList, randomList);
 };
-var $elm$random$Random$step = F2(
-	function (_v0, seed) {
-		var generator = _v0.a;
-		return generator(seed);
-	});
 var $author$project$FadeBorders$init = function (seed) {
 	var numberOfVariables = 6;
 	var level = 0;
@@ -5915,12 +5992,18 @@ var $author$project$Main$init = F2(
 					$author$project$Main$SpirallyModel,
 					$elm$core$Platform$Cmd$map($author$project$Main$SpirallyMsg),
 					$author$project$Spirally$init(seed));
-			default:
+			case 'FadeBorders':
 				return A3(
 					$elm$core$Tuple$mapBoth,
 					$author$project$Main$FadeBordersModel,
 					$elm$core$Platform$Cmd$map($author$project$Main$FadeBordersMsg),
 					$author$project$FadeBorders$init(seed));
+			default:
+				return A3(
+					$elm$core$Tuple$mapBoth,
+					$author$project$Main$BasicModel,
+					$elm$core$Platform$Cmd$map($author$project$Main$BasicMsg),
+					$author$project$Basic$init(seed));
 		}
 	});
 var $elm$random$Random$initialSeed = function (x) {
@@ -5934,7 +6017,7 @@ var $elm$random$Random$initialSeed = function (x) {
 };
 var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $elm$core$Platform$Sub$map = _Platform_map;
-var $author$project$FadeBorders$GotNextAnimationFrame = {$: 'GotNextAnimationFrame'};
+var $author$project$Basic$GotNextAnimationFrame = {$: 'GotNextAnimationFrame'};
 var $elm$core$List$isEmpty = function (xs) {
 	if (!xs.b) {
 		return true;
@@ -6078,6 +6161,14 @@ var $elm$browser$Browser$AnimationManager$onAnimationFrameDelta = function (tagg
 		$elm$browser$Browser$AnimationManager$Delta(tagger));
 };
 var $elm$browser$Browser$Events$onAnimationFrameDelta = $elm$browser$Browser$AnimationManager$onAnimationFrameDelta;
+var $author$project$Basic$subscriptions = function (_v0) {
+	var doNextAnimationFrame = _v0.doNextAnimationFrame;
+	return $elm$core$List$isEmpty(doNextAnimationFrame) ? $elm$core$Platform$Sub$none : $elm$browser$Browser$Events$onAnimationFrameDelta(
+		function (_v1) {
+			return $author$project$Basic$GotNextAnimationFrame;
+		});
+};
+var $author$project$FadeBorders$GotNextAnimationFrame = {$: 'GotNextAnimationFrame'};
 var $author$project$FadeBorders$subscriptions = function (_v0) {
 	var doNextAnimationFrame = _v0.doNextAnimationFrame;
 	return $elm$core$List$isEmpty(doNextAnimationFrame) ? $elm$core$Platform$Sub$none : $elm$browser$Browser$Events$onAnimationFrameDelta(
@@ -6535,12 +6626,18 @@ var $author$project$Main$subscriptions = function (model) {
 				$elm$core$Platform$Sub$map,
 				$author$project$Main$SpirallyMsg,
 				$author$project$Spirally$subscriptions(subModel));
-		default:
+		case 'FadeBordersModel':
 			var subModel = model.a;
 			return A2(
 				$elm$core$Platform$Sub$map,
 				$author$project$Main$FadeBordersMsg,
 				$author$project$FadeBorders$subscriptions(subModel));
+		default:
+			var subModel = model.a;
+			return A2(
+				$elm$core$Platform$Sub$map,
+				$author$project$Main$BasicMsg,
+				$author$project$Basic$subscriptions(subModel));
 	}
 };
 var $rtfeldman$elm_css$VirtualDom$Styled$UnscopedStyles = function (a) {
@@ -7307,11 +7404,154 @@ var $author$project$Main$getRandomSeed = function (model) {
 		case 'SpirallyModel':
 			var subModel = model.a;
 			return subModel.randomSeed;
+		case 'FadeBordersModel':
+			var subModel = model.a;
+			return subModel.randomSeed;
 		default:
 			var subModel = model.a;
 			return subModel.randomSeed;
 	}
 };
+var $author$project$Basic$Down = {$: 'Down'};
+var $author$project$Basic$None = {$: 'None'};
+var $author$project$Basic$maxLevel = 7;
+var $author$project$Basic$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'Randomize':
+				if (_Utils_eq(model.level, -1)) {
+					var _v1 = A2(
+						$elm$random$Random$step,
+						$author$project$Basic$randomizeAdjustments(model.numberOfVariables),
+						model.randomSeed);
+					var randomizedAdjustments = _v1.a;
+					var seedAfterAdustments = _v1.b;
+					var _v2 = A2(
+						$elm$random$Random$step,
+						$author$project$Basic$randomVariables(model.numberOfVariables),
+						seedAfterAdustments);
+					var newInitialColor = _v2.a;
+					var newSeed = _v2.b;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								adjustments: randomizedAdjustments,
+								doNextAnimationFrame: _Utils_ap(
+									model.doNextAnimationFrame,
+									_List_fromArray(
+										[$author$project$Basic$AnimateLevel])),
+								initialVariables: newInitialColor,
+								randomSeed: newSeed
+							}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 'AnimateLevel':
+				var changeLevel = F2(
+					function (dir, m) {
+						switch (dir.$) {
+							case 'Up':
+								return _Utils_update(
+									m,
+									{level: m.level + 1});
+							case 'Down':
+								return _Utils_update(
+									m,
+									{level: m.level - 1});
+							default:
+								return m;
+						}
+					});
+				if (_Utils_eq(model.level, $author$project$Basic$maxLevel)) {
+					return _Utils_Tuple2(
+						_Utils_eq(model.levelAnimationDirection, $author$project$Basic$None) ? A2(
+							changeLevel,
+							$author$project$Basic$Down,
+							_Utils_update(
+								model,
+								{
+									doNextAnimationFrame: _Utils_ap(
+										model.doNextAnimationFrame,
+										_List_fromArray(
+											[$author$project$Basic$AnimateLevel])),
+									levelAnimationDirection: $author$project$Basic$Down
+								})) : _Utils_update(
+							model,
+							{levelAnimationDirection: $author$project$Basic$None}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					if (_Utils_eq(model.level, -1)) {
+						var _v3 = model.levelAnimationDirection;
+						if (_v3.$ === 'Down') {
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{levelAnimationDirection: $author$project$Basic$Up}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(
+								A2(
+									changeLevel,
+									$author$project$Basic$Up,
+									_Utils_update(
+										model,
+										{
+											doNextAnimationFrame: _Utils_ap(
+												model.doNextAnimationFrame,
+												_List_fromArray(
+													[$author$project$Basic$AnimateLevel])),
+											levelAnimationDirection: $author$project$Basic$Up
+										})),
+								$elm$core$Platform$Cmd$none);
+						}
+					} else {
+						return _Utils_Tuple2(
+							A2(
+								changeLevel,
+								model.levelAnimationDirection,
+								_Utils_update(
+									model,
+									{
+										doNextAnimationFrame: _Utils_ap(
+											model.doNextAnimationFrame,
+											_List_fromArray(
+												[$author$project$Basic$AnimateLevel]))
+									})),
+							$elm$core$Platform$Cmd$none);
+					}
+				}
+			case 'DoNextAnimationFrame':
+				var doMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							doNextAnimationFrame: _Utils_ap(
+								model.doNextAnimationFrame,
+								_List_fromArray(
+									[doMsg]))
+						}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var _v5 = model.doNextAnimationFrame;
+				if (_v5.b) {
+					var first = _v5.a;
+					var rest = _v5.b;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{doNextAnimationFrame: rest}),
+						A2(
+							$elm$core$Task$perform,
+							$elm$core$Basics$identity,
+							$elm$core$Task$succeed(first)));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+		}
+	});
 var $author$project$FadeBorders$Down = {$: 'Down'};
 var $author$project$FadeBorders$None = {$: 'None'};
 var $author$project$FadeBorders$maxLevel = 7;
@@ -9664,7 +9904,7 @@ var $author$project$Windows$update = F2(
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		var _v0 = _Utils_Tuple2(msg, model);
-		_v0$6:
+		_v0$7:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'ChangeVariety':
@@ -9683,7 +9923,7 @@ var $author$project$Main$update = F2(
 							$elm$core$Platform$Cmd$map($author$project$Main$LeafyMsg),
 							A2($author$project$Leafy$update, subMsg, subModel));
 					} else {
-						break _v0$6;
+						break _v0$7;
 					}
 				case 'WigglyMsg':
 					if (_v0.b.$ === 'WigglyModel') {
@@ -9695,7 +9935,7 @@ var $author$project$Main$update = F2(
 							$elm$core$Platform$Cmd$map($author$project$Main$WigglyMsg),
 							A2($author$project$Wiggly$update, subMsg, subModel));
 					} else {
-						break _v0$6;
+						break _v0$7;
 					}
 				case 'WindowsMsg':
 					if (_v0.b.$ === 'WindowsModel') {
@@ -9707,7 +9947,7 @@ var $author$project$Main$update = F2(
 							$elm$core$Platform$Cmd$map($author$project$Main$WindowsMsg),
 							A2($author$project$Windows$update, subMsg, subModel));
 					} else {
-						break _v0$6;
+						break _v0$7;
 					}
 				case 'SpirallyMsg':
 					if (_v0.b.$ === 'SpirallyModel') {
@@ -9719,9 +9959,9 @@ var $author$project$Main$update = F2(
 							$elm$core$Platform$Cmd$map($author$project$Main$SpirallyMsg),
 							A2($author$project$Spirally$update, subMsg, subModel));
 					} else {
-						break _v0$6;
+						break _v0$7;
 					}
-				default:
+				case 'FadeBordersMsg':
 					if (_v0.b.$ === 'FadeBordersModel') {
 						var subMsg = _v0.a.a;
 						var subModel = _v0.b.a;
@@ -9731,7 +9971,19 @@ var $author$project$Main$update = F2(
 							$elm$core$Platform$Cmd$map($author$project$Main$FadeBordersMsg),
 							A2($author$project$FadeBorders$update, subMsg, subModel));
 					} else {
-						break _v0$6;
+						break _v0$7;
+					}
+				default:
+					if (_v0.b.$ === 'BasicModel') {
+						var subMsg = _v0.a.a;
+						var subModel = _v0.b.a;
+						return A3(
+							$elm$core$Tuple$mapBoth,
+							$author$project$Main$BasicModel,
+							$elm$core$Platform$Cmd$map($author$project$Main$BasicMsg),
+							A2($author$project$Basic$update, subMsg, subModel));
+					} else {
+						break _v0$7;
 					}
 			}
 		}
@@ -9740,6 +9992,7 @@ var $author$project$Main$update = F2(
 var $author$project$Main$ChangeVariety = function (a) {
 	return {$: 'ChangeVariety', a: a};
 };
+var $author$project$Main$FadeBorders = {$: 'FadeBorders'};
 var $author$project$Main$Leafy = {$: 'Leafy'};
 var $author$project$Main$Spirally = {$: 'Spirally'};
 var $author$project$Main$Wiggly = {$: 'Wiggly'};
@@ -10158,6 +10411,58 @@ var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
 		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
 };
 var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
+var $author$project$Main$isVariety = F2(
+	function (variety, model) {
+		var _v0 = _Utils_Tuple2(variety, model);
+		_v0$6:
+		while (true) {
+			switch (_v0.a.$) {
+				case 'Leafy':
+					if (_v0.b.$ === 'LeafyModel') {
+						var _v1 = _v0.a;
+						return true;
+					} else {
+						break _v0$6;
+					}
+				case 'Wiggly':
+					if (_v0.b.$ === 'WigglyModel') {
+						var _v2 = _v0.a;
+						return true;
+					} else {
+						break _v0$6;
+					}
+				case 'Windows':
+					if (_v0.b.$ === 'WindowsModel') {
+						var _v3 = _v0.a;
+						return true;
+					} else {
+						break _v0$6;
+					}
+				case 'Spirally':
+					if (_v0.b.$ === 'SpirallyModel') {
+						var _v4 = _v0.a;
+						return true;
+					} else {
+						break _v0$6;
+					}
+				case 'FadeBorders':
+					if (_v0.b.$ === 'FadeBordersModel') {
+						var _v5 = _v0.a;
+						return true;
+					} else {
+						break _v0$6;
+					}
+				default:
+					if (_v0.b.$ === 'BasicModel') {
+						var _v6 = _v0.a;
+						return true;
+					} else {
+						break _v0$6;
+					}
+			}
+		}
+		return false;
+	});
 var $rtfeldman$elm_css$VirtualDom$Styled$KeyedNodeNS = F4(
 	function (a, b, c, d) {
 		return {$: 'KeyedNodeNS', a: a, b: b, c: c, d: d};
@@ -10314,7 +10619,7 @@ var $rtfeldman$elm_css$VirtualDom$Styled$text = function (str) {
 		$elm$virtual_dom$VirtualDom$text(str));
 };
 var $rtfeldman$elm_css$Html$Styled$text = $rtfeldman$elm_css$VirtualDom$Styled$text;
-var $author$project$FadeBorders$cssStyles = '\ndiv {\n    box-sizing: border-box;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n#container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
+var $author$project$Basic$cssStyles = '\ndiv {\n    box-sizing: border-box;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n#container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
 var $elm$html$Html$node = $elm$virtual_dom$VirtualDom$node;
 var $elm$html$Html$Events$on = F2(
 	function (event, decoder) {
@@ -10330,6 +10635,153 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		$elm$json$Json$Decode$succeed(msg));
 };
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Basic$Randomize = {$: 'Randomize'};
+var $author$project$Basic$configToRbgString = function (list) {
+	if ((list.b && list.b.b) && list.b.b.b) {
+		var r = list.a;
+		var _v1 = list.b;
+		var g = _v1.a;
+		var _v2 = _v1.b;
+		var b = _v2.a;
+		return 'rgb(' + ($elm$core$String$fromInt(r) + (',' + ($elm$core$String$fromInt(g) + (',' + ($elm$core$String$fromInt(b) + ')')))));
+	} else {
+		return 'rgb(0,0,0)';
+	}
+};
+var $author$project$Basic$generateImage = F5(
+	function (adjustments, level, pathKey, currentPosition, config) {
+		return (!level) ? A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('box'),
+					$elm$html$Html$Attributes$class(currentPosition),
+					$elm$html$Html$Attributes$id(pathKey),
+					A2(
+					$elm$html$Html$Attributes$style,
+					'background-color',
+					$author$project$Basic$configToRbgString(config))
+				]),
+			_List_Nil) : A3(
+			$elm$html$Html$Keyed$node,
+			'div',
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('box'),
+					$elm$html$Html$Attributes$class(currentPosition)
+				]),
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					pathKey + '-tl',
+					A5(
+						$author$project$Basic$generateImage,
+						adjustments,
+						level - 1,
+						pathKey + '-tl',
+						'tl',
+						adjustments.tl(config))),
+					_Utils_Tuple2(
+					pathKey + '-tr',
+					A5(
+						$author$project$Basic$generateImage,
+						adjustments,
+						level - 1,
+						pathKey + '-tr',
+						'tr',
+						adjustments.tr(config))),
+					_Utils_Tuple2(
+					pathKey + '-bl',
+					A5(
+						$author$project$Basic$generateImage,
+						adjustments,
+						level - 1,
+						pathKey + '-bl',
+						'bl',
+						adjustments.bl(config))),
+					_Utils_Tuple2(
+					pathKey + '-br',
+					A5(
+						$author$project$Basic$generateImage,
+						adjustments,
+						level - 1,
+						pathKey + '-br',
+						'br',
+						adjustments.br(config)))
+				]));
+	});
+var $elm$virtual_dom$VirtualDom$lazy5 = _VirtualDom_lazy5;
+var $elm$html$Html$Lazy$lazy5 = $elm$virtual_dom$VirtualDom$lazy5;
+var $author$project$Basic$onTransitionEnd = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'transitionend',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $author$project$Basic$viewFrameworks = function (model) {
+	return A2(
+		$elm$core$List$map,
+		function (level) {
+			return _Utils_Tuple2(
+				$elm$core$String$fromInt(level),
+				A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$id(
+							'level-' + $elm$core$String$fromInt(level)),
+							A2(
+							$elm$html$Html$Attributes$style,
+							'opacity',
+							(_Utils_cmp(level, model.level) < 1) ? '1' : '0'),
+							A2($elm$html$Html$Attributes$style, 'transition', 'opacity 0.5s linear'),
+							A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+							A2($elm$html$Html$Attributes$style, 'top', '0'),
+							A2($elm$html$Html$Attributes$style, 'bottom', '0'),
+							A2($elm$html$Html$Attributes$style, 'right', '0'),
+							A2($elm$html$Html$Attributes$style, 'left', '0'),
+							(!level) ? $author$project$Basic$onTransitionEnd($author$project$Basic$Randomize) : $elm$html$Html$Attributes$class('')
+						]),
+					_List_fromArray(
+						[
+							A6(
+							$elm$html$Html$Lazy$lazy5,
+							$author$project$Basic$generateImage,
+							model.adjustments,
+							level,
+							'level-' + $elm$core$String$fromInt(level),
+							'outer',
+							model.initialVariables)
+						])));
+		},
+		A2($elm$core$List$range, 0, $author$project$Basic$maxLevel));
+};
+var $author$project$Basic$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A3(
+				$elm$html$Html$node,
+				'style',
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text($author$project$Basic$cssStyles)
+					])),
+				A3(
+				$elm$html$Html$Keyed$node,
+				'div',
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$id('container'),
+						_Utils_eq(model.level, $author$project$Basic$maxLevel) ? $elm$html$Html$Events$onClick($author$project$Basic$AnimateLevel) : $elm$html$Html$Attributes$class('')
+					]),
+				$author$project$Basic$viewFrameworks(model))
+			]));
+};
+var $author$project$FadeBorders$cssStyles = '\ndiv {\n    box-sizing: border-box;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n#container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
 var $author$project$FadeBorders$Randomize = {$: 'Randomize'};
 var $author$project$FadeBorders$configToRbgString = function (list) {
 	if ((list.b && list.b.b) && list.b.b.b) {
@@ -10411,8 +10863,6 @@ var $author$project$FadeBorders$generateImage = F5(
 						adjustments.br(config)))
 				]));
 	});
-var $elm$virtual_dom$VirtualDom$lazy5 = _VirtualDom_lazy5;
-var $elm$html$Html$Lazy$lazy5 = $elm$virtual_dom$VirtualDom$lazy5;
 var $author$project$FadeBorders$onTransitionEnd = function (msg) {
 	return A2(
 		$elm$html$Html$Events$on,
@@ -11100,13 +11550,20 @@ var $author$project$Main$view = function (model) {
 					$rtfeldman$elm_css$Html$Styled$map,
 					$author$project$Main$SpirallyMsg,
 					$author$project$Spirally$view(subModel));
-			default:
+			case 'FadeBordersModel':
 				var subModel = model.a;
 				return A2(
 					$rtfeldman$elm_css$Html$Styled$map,
 					$author$project$Main$FadeBordersMsg,
 					$rtfeldman$elm_css$Html$Styled$fromUnstyled(
 						$author$project$FadeBorders$view(subModel)));
+			default:
+				var subModel = model.a;
+				return A2(
+					$rtfeldman$elm_css$Html$Styled$map,
+					$author$project$Main$BasicMsg,
+					$rtfeldman$elm_css$Html$Styled$fromUnstyled(
+						$author$project$Basic$view(subModel)));
 		}
 	}();
 	var controls = A2(
@@ -11157,7 +11614,8 @@ var $author$project$Main$view = function (model) {
 								$rtfeldman$elm_css$Html$Styled$Attributes$css(
 								_List_fromArray(
 									[
-										$rtfeldman$elm_css$Css$backgroundColor(
+										A2($author$project$Main$isVariety, variety, model) ? $rtfeldman$elm_css$Css$backgroundColor(
+										$rtfeldman$elm_css$Css$hex('555555')) : $rtfeldman$elm_css$Css$backgroundColor(
 										$rtfeldman$elm_css$Css$hex('333333')),
 										$rtfeldman$elm_css$Css$color(
 										$rtfeldman$elm_css$Css$hex('ffffff')),
@@ -11167,7 +11625,7 @@ var $author$project$Main$view = function (model) {
 										_List_fromArray(
 											[
 												$rtfeldman$elm_css$Css$backgroundColor(
-												$rtfeldman$elm_css$Css$hex('444444'))
+												$rtfeldman$elm_css$Css$hex('555555'))
 											])),
 										$rtfeldman$elm_css$Css$border(
 										$rtfeldman$elm_css$Css$px(0)),
@@ -11187,11 +11645,12 @@ var $author$project$Main$view = function (model) {
 				},
 				_List_fromArray(
 					[
-						_Utils_Tuple2($author$project$Main$Leafy, 'Leafy'),
-						_Utils_Tuple2($author$project$Main$Wiggly, 'Wiggly'),
+						_Utils_Tuple2($author$project$Main$Basic, 'Basic'),
+						_Utils_Tuple2($author$project$Main$FadeBorders, 'Fade Borders'),
 						_Utils_Tuple2($author$project$Main$Windows, 'Windows'),
-						_Utils_Tuple2($author$project$Main$Spirally, 'Spirally'),
-						_Utils_Tuple2($author$project$Main$FadeBorders, 'Fade Borders')
+						_Utils_Tuple2($author$project$Main$Wiggly, 'Wiggly'),
+						_Utils_Tuple2($author$project$Main$Leafy, 'Leafy'),
+						_Utils_Tuple2($author$project$Main$Spirally, 'Spirally')
 					]))));
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -11238,7 +11697,7 @@ var $author$project$Main$main = $elm$browser$Browser$element(
 		init: function (flags) {
 			return A2(
 				$author$project$Main$init,
-				$author$project$Main$FadeBorders,
+				$author$project$Main$Basic,
 				$elm$random$Random$initialSeed(flags.randomSeed));
 		},
 		subscriptions: $author$project$Main$subscriptions,
