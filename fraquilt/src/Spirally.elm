@@ -1,43 +1,19 @@
-module Spirally exposing (Adjustments, Config, Memoized, Model, Msg(..), init, subscriptions, update, view)
+module Spirally exposing (..)
 
+import Css
 import Dict
-import Html exposing (Html, div)
-import Html.Attributes exposing (class, id)
-import Html.Events exposing (onClick)
-import Html.Keyed as Keyed
+import Html.Styled as Html exposing (Html, div)
+import Html.Styled.Attributes exposing (class, css, id)
+import Html.Styled.Events exposing (onClick)
+import Html.Styled.Keyed as Keyed
 import List.Extra as List
 import Random
 import Random.List
-
-
-type alias Adjustments a =
-    { tl : a -> a
-    , tr : a -> a
-    , bl : a -> a
-    , br : a -> a
-    }
+import Utils exposing (..)
 
 
 type alias Config =
     List Int
-
-
-configToRbgString : Config -> String
-configToRbgString list =
-    case list of
-        r :: g :: b :: _ ->
-            "rgb(" ++ String.fromInt r ++ "," ++ String.fromInt g ++ "," ++ String.fromInt b ++ ")"
-
-        _ ->
-            "rgb(0,0,0)"
-
-
-borderRadiusString : Maybe Int -> String
-borderRadiusString i =
-    i
-        |> Maybe.withDefault 0
-        |> toFloat
-        |> (\x -> ((x / 255 * 100) |> String.fromFloat) ++ "%")
 
 
 type alias Memoized =
@@ -59,11 +35,10 @@ generateImage adjustments memoized level pathKey currentPosition config =
             [ class "box"
             , class currentPosition
             , id pathKey
-            , Html.Attributes.style "background-color" (configToRbgString config)
-            , Html.Attributes.style "border-top-left-radius" (List.getAt 3 config |> borderRadiusString)
-            , Html.Attributes.style "border-top-right-radius" (List.getAt 4 config |> borderRadiusString)
-            , Html.Attributes.style "border-bottom-left-radius" (List.getAt 5 config |> borderRadiusString)
-            , Html.Attributes.style "border-bottom-right-radius" (List.getAt 6 config |> borderRadiusString)
+            , css
+                [ Css.backgroundColor (configToRbgString config)
+                , Utils.configToBorderStyle (List.drop 3 config)
+                ]
             ]
             []
         , memoized
@@ -75,15 +50,12 @@ generateImage adjustments memoized level pathKey currentPosition config =
                 Keyed.node "div"
                     [ class "box"
                     , class currentPosition
-                    , Html.Attributes.style "background-color" (configToRbgString config)
+                    , css [ Css.backgroundColor (configToRbgString config) ]
                     ]
                     [ ( pathKey ++ "-outer"
                       , Keyed.node "div"
                             [ class "outer"
-                            , Html.Attributes.style "border-top-left-radius" (List.getAt 3 config |> borderRadiusString)
-                            , Html.Attributes.style "border-top-right-radius" (List.getAt 4 config |> borderRadiusString)
-                            , Html.Attributes.style "border-bottom-left-radius" (List.getAt 5 config |> borderRadiusString)
-                            , Html.Attributes.style "border-bottom-right-radius" (List.getAt 6 config |> borderRadiusString)
+                            , css [ Utils.configToBorderStyle (List.drop 3 config) ]
                             ]
                             subImages
                       )
@@ -216,11 +188,13 @@ viewFrameworks : Model -> List ( String, Html Msg )
 viewFrameworks model =
     [ ( String.fromInt model.iteration
       , div
-            [ Html.Attributes.style "position" "absolute"
-            , Html.Attributes.style "top" "0"
-            , Html.Attributes.style "bottom" "0"
-            , Html.Attributes.style "right" "0"
-            , Html.Attributes.style "left" "0"
+            [ css
+                [ Css.position Css.absolute
+                , Css.top (Css.px 0)
+                , Css.bottom (Css.px 0)
+                , Css.left (Css.px 0)
+                , Css.right (Css.px 0)
+                ]
             ]
             [ generateImage
                 model.adjustments

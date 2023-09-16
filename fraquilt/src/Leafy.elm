@@ -1,4 +1,4 @@
-module Leafy exposing (Adjustments, Config, ConfigParams, Memoized, Model, Msg(..), init, subscriptions, update, view)
+module Leafy exposing (..)
 
 import Css
 import Dict
@@ -6,45 +6,12 @@ import Html.Styled as Html exposing (Html, div)
 import Html.Styled.Attributes exposing (css, id)
 import Html.Styled.Events exposing (onClick)
 import Html.Styled.Keyed as Keyed
-import List.Extra as List
 import Random
-import Random.List
-
-
-type alias Adjustments a =
-    { tl : a -> a
-    , tr : a -> a
-    , bl : a -> a
-    , br : a -> a
-    }
+import Utils exposing (..)
 
 
 type alias Config =
     List Int
-
-
-configToRbgString : Config -> Css.Color
-configToRbgString list =
-    case list of
-        r :: g :: b :: _ ->
-            Css.rgb r g b
-
-        _ ->
-            Css.rgb 0 0 0
-
-
-configToBorderStyle : Config -> List Css.Style
-configToBorderStyle list =
-    case list of
-        l :: r :: t :: b :: _ ->
-            [ Css.borderTopLeftRadius (Css.pct (toFloat l))
-            , Css.borderBottomRightRadius (Css.pct (toFloat r))
-            , Css.borderTopRightRadius (Css.pct (toFloat t))
-            , Css.borderBottomLeftRadius (Css.pct (toFloat b))
-            ]
-
-        _ ->
-            []
 
 
 type alias Memoized =
@@ -72,14 +39,11 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
     if level == 0 then
         ( div
             [ css
-                ([ Css.position Css.absolute
-                 , Css.width (Css.pct 50)
-                 , Css.height (Css.pct 50)
-                 , currentPosition
-                 , Css.backgroundColor (configToRbgString colorConfigParams.config)
-                 ]
-                    ++ configToBorderStyle borderConfigParams.config
-                )
+                [ Utils.boxStyle
+                , currentPosition
+                , Css.backgroundColor (configToRbgString colorConfigParams.config)
+                , configToBorderStyle borderConfigParams.config
+                ]
             , id pathKey
             ]
             []
@@ -93,9 +57,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
                 Keyed.node "div"
                     [ css
                         [ Css.backgroundColor (configToRbgString colorConfigParams.config)
-                        , Css.position Css.absolute
-                        , Css.width (Css.pct 50)
-                        , Css.height (Css.pct 50)
+                        , boxStyle
                         , currentPosition
                         ]
                     ]
@@ -133,7 +95,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
                     { newBorderConfigParams | config = adjustBorder.tl }
                     (level - 1)
                     (pathKey ++ "-tl")
-                    (Css.batch [ Css.top (Css.px 0), Css.left (Css.px 0) ])
+                    tlStyle
 
             ( trImage, colorMemoized3, borderMemoized3 ) =
                 generateImage
@@ -141,7 +103,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
                     { borderMemoized2 | config = adjustBorder.tr }
                     (level - 1)
                     (pathKey ++ "-tr")
-                    (Css.batch [ Css.top (Css.px 0), Css.right (Css.px 0) ])
+                    trStyle
 
             ( blImage, colorMemoized4, borderMemoized4 ) =
                 generateImage
@@ -149,7 +111,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
                     { borderMemoized3 | config = adjustBorder.bl }
                     (level - 1)
                     (pathKey ++ "-bl")
-                    (Css.batch [ Css.bottom (Css.px 0), Css.left (Css.px 0) ])
+                    blStyle
 
             ( brImage, colorMemoized5, borderMemoized5 ) =
                 generateImage
@@ -157,7 +119,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
                     { borderMemoized4 | config = adjustBorder.br }
                     (level - 1)
                     (pathKey ++ "-br")
-                    (Css.batch [ Css.bottom (Css.px 0), Css.right (Css.px 0) ])
+                    brStyle
         in
         ( wrapImages
             [ ( pathKey ++ "-tl", tlImage )
@@ -168,44 +130,6 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
         , colorMemoized5
         , borderMemoized5
         )
-
-
-randomListShuffleFunction : Int -> Random.Generator (List Int -> List Int)
-randomListShuffleFunction listLength =
-    Random.List.shuffle (List.range 0 (listLength - 1))
-        |> Random.map
-            (\listOfIndices ->
-                \listInput ->
-                    List.indexedMap
-                        (\index item ->
-                            let
-                                swapInput =
-                                    List.getAt index listOfIndices
-                                        |> Maybe.withDefault index
-                            in
-                            List.getAt swapInput listInput
-                                |> Maybe.withDefault item
-                        )
-                        listInput
-            )
-
-
-randomizeAdjustments : Int -> Random.Generator (Adjustments Config)
-randomizeAdjustments listLength =
-    let
-        randomList =
-            randomListShuffleFunction listLength
-    in
-    Random.map4 Adjustments
-        randomList
-        randomList
-        randomList
-        randomList
-
-
-randomVariables : Int -> Random.Generator Config
-randomVariables n =
-    Random.list n (Random.int 0 255)
 
 
 randomizeColors : Int -> Random.Seed -> ( ConfigParams, Random.Seed )
@@ -240,18 +164,13 @@ viewFrameworks : Model -> List ( String, Html Msg )
 viewFrameworks model =
     [ ( String.fromInt model.iteration
       , div
-            [ css [ Css.position Css.absolute, Css.top (Css.px 0), Css.left (Css.px 0), Css.bottom (Css.px 0), Css.right (Css.px 0) ] ]
+            [ css [ containerStyle ] ]
             [ generateImage
                 model.colorParams
                 model.borderParams
                 maxLevel
                 ("level-" ++ String.fromInt maxLevel)
-                (Css.batch
-                    [ Css.position Css.absolute
-                    , Css.width (Css.pct 100)
-                    , Css.height (Css.pct 100)
-                    ]
-                )
+                outerStyle
                 |> (\( image, _, _ ) -> image)
             ]
       )
@@ -263,11 +182,7 @@ view model =
     div []
         [ Keyed.node "div"
             [ css
-                [ Css.position Css.absolute
-                , Css.top (Css.px 0)
-                , Css.left (Css.px 0)
-                , Css.bottom (Css.px 0)
-                , Css.right (Css.px 0)
+                [ containerStyle
                 ]
             , onClick
                 Randomize

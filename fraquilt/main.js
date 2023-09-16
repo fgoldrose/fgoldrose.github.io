@@ -5527,7 +5527,7 @@ var $author$project$FadeBorders$init = function (seed) {
 };
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
-var $author$project$Leafy$Adjustments = F4(
+var $author$project$Utils$Adjustments = F4(
 	function (tl, tr, bl, br) {
 		return {bl: bl, br: br, tl: tl, tr: tr};
 	});
@@ -5605,7 +5605,7 @@ var $elm_community$random_extra$Random$List$shuffle = function (list) {
 		},
 		$elm$random$Random$independentSeed);
 };
-var $author$project$Leafy$randomListShuffleFunction = function (listLength) {
+var $author$project$Utils$randomListShuffleFunction = function (listLength) {
 	return A2(
 		$elm$random$Random$map,
 		function (listOfIndices) {
@@ -5629,15 +5629,15 @@ var $author$project$Leafy$randomListShuffleFunction = function (listLength) {
 		$elm_community$random_extra$Random$List$shuffle(
 			A2($elm$core$List$range, 0, listLength - 1)));
 };
-var $author$project$Leafy$randomizeAdjustments = function (listLength) {
-	var randomList = $author$project$Leafy$randomListShuffleFunction(listLength);
-	return A5($elm$random$Random$map4, $author$project$Leafy$Adjustments, randomList, randomList, randomList, randomList);
+var $author$project$Utils$randomizeAdjustments = function (listLength) {
+	var randomList = $author$project$Utils$randomListShuffleFunction(listLength);
+	return A5($elm$random$Random$map4, $author$project$Utils$Adjustments, randomList, randomList, randomList, randomList);
 };
 var $author$project$Leafy$randomizeBorder = F2(
 	function (numberOfVariables, seed) {
 		var _v0 = A2(
 			$elm$random$Random$step,
-			$author$project$Leafy$randomizeAdjustments(numberOfVariables),
+			$author$project$Utils$randomizeAdjustments(numberOfVariables),
 			seed);
 		var borderAdjustments = _v0.a;
 		var seed1 = _v0.b;
@@ -5654,7 +5654,7 @@ var $author$project$Leafy$randomizeBorder = F2(
 			{adjustments: borderAdjustments, config: newInitial, memoized: $elm$core$Dict$empty},
 			seed2);
 	});
-var $author$project$Leafy$randomVariables = function (n) {
+var $author$project$Utils$randomVariables = function (n) {
 	return A2(
 		$elm$random$Random$list,
 		n,
@@ -5664,13 +5664,13 @@ var $author$project$Leafy$randomizeColors = F2(
 	function (numberOfVariables, seed) {
 		var _v0 = A2(
 			$elm$random$Random$step,
-			$author$project$Leafy$randomizeAdjustments(numberOfVariables),
+			$author$project$Utils$randomizeAdjustments(numberOfVariables),
 			seed);
 		var adjustments = _v0.a;
 		var seedAfterAdustments = _v0.b;
 		var _v1 = A2(
 			$elm$random$Random$step,
-			$author$project$Leafy$randomVariables(numberOfVariables),
+			$author$project$Utils$randomVariables(numberOfVariables),
 			seedAfterAdustments);
 		var newInitialColor = _v1.a;
 		var newSeed = _v1.b;
@@ -5696,10 +5696,6 @@ var $author$project$Spirally$randomVariables = function (n) {
 		n,
 		A2($elm$random$Random$int, 0, 255));
 };
-var $author$project$Spirally$Adjustments = F4(
-	function (tl, tr, bl, br) {
-		return {bl: bl, br: br, tl: tl, tr: tr};
-	});
 var $author$project$Spirally$randomListShuffleFunction = function (listLength) {
 	return A2(
 		$elm$random$Random$map,
@@ -5726,7 +5722,7 @@ var $author$project$Spirally$randomListShuffleFunction = function (listLength) {
 };
 var $author$project$Spirally$randomizeAdjustments = function (listLength) {
 	var randomList = $author$project$Spirally$randomListShuffleFunction(listLength);
-	return A5($elm$random$Random$map4, $author$project$Spirally$Adjustments, randomList, randomList, randomList, randomList);
+	return A5($elm$random$Random$map4, $author$project$Utils$Adjustments, randomList, randomList, randomList, randomList);
 };
 var $author$project$Spirally$init = function (seed) {
 	var numberOfVariables = 7;
@@ -7469,11 +7465,8 @@ var $rtfeldman$elm_css$Css$prop1 = F2(
 		return A2($rtfeldman$elm_css$Css$property, key, arg.value);
 	});
 var $rtfeldman$elm_css$Css$bottom = $rtfeldman$elm_css$Css$prop1('bottom');
-var $rtfeldman$elm_css$Css$borderBottomLeftRadius = $rtfeldman$elm_css$Css$prop1('border-bottom-left-radius');
-var $rtfeldman$elm_css$Css$borderBottomRightRadius = $rtfeldman$elm_css$Css$prop1('border-bottom-right-radius');
-var $rtfeldman$elm_css$Css$borderTopLeftRadius = $rtfeldman$elm_css$Css$prop1('border-top-left-radius');
-var $rtfeldman$elm_css$Css$borderTopRightRadius = $rtfeldman$elm_css$Css$prop1('border-top-right-radius');
-var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
+var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
+var $rtfeldman$elm_css$Css$PxUnits = {$: 'PxUnits'};
 var $elm$core$String$fromFloat = _String_fromNumber;
 var $rtfeldman$elm_css$Css$Internal$lengthConverter = F3(
 	function (units, unitLabel, numericValue) {
@@ -7500,8 +7493,43 @@ var $rtfeldman$elm_css$Css$Internal$lengthConverter = F3(
 				unitLabel)
 		};
 	});
+var $rtfeldman$elm_css$Css$px = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PxUnits, 'px');
+var $author$project$Utils$blStyle = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Css$bottom(
+			$rtfeldman$elm_css$Css$px(0)),
+			$rtfeldman$elm_css$Css$left(
+			$rtfeldman$elm_css$Css$px(0))
+		]));
+var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
+var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
 var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
-var $author$project$Leafy$configToBorderStyle = function (list) {
+var $rtfeldman$elm_css$Css$position = $rtfeldman$elm_css$Css$prop1('position');
+var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
+var $author$project$Utils$boxStyle = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Css$height(
+			$rtfeldman$elm_css$Css$pct(50)),
+			$rtfeldman$elm_css$Css$width(
+			$rtfeldman$elm_css$Css$pct(50)),
+			$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$absolute)
+		]));
+var $rtfeldman$elm_css$Css$right = $rtfeldman$elm_css$Css$prop1('right');
+var $author$project$Utils$brStyle = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Css$bottom(
+			$rtfeldman$elm_css$Css$px(0)),
+			$rtfeldman$elm_css$Css$right(
+			$rtfeldman$elm_css$Css$px(0))
+		]));
+var $rtfeldman$elm_css$Css$borderBottomLeftRadius = $rtfeldman$elm_css$Css$prop1('border-bottom-left-radius');
+var $rtfeldman$elm_css$Css$borderBottomRightRadius = $rtfeldman$elm_css$Css$prop1('border-bottom-right-radius');
+var $rtfeldman$elm_css$Css$borderTopLeftRadius = $rtfeldman$elm_css$Css$prop1('border-top-left-radius');
+var $rtfeldman$elm_css$Css$borderTopRightRadius = $rtfeldman$elm_css$Css$prop1('border-top-right-radius');
+var $author$project$Utils$configToBorderStyle = function (list) {
 	if (((list.b && list.b.b) && list.b.b.b) && list.b.b.b.b) {
 		var l = list.a;
 		var _v1 = list.b;
@@ -7510,19 +7538,20 @@ var $author$project$Leafy$configToBorderStyle = function (list) {
 		var t = _v2.a;
 		var _v3 = _v2.b;
 		var b = _v3.a;
-		return _List_fromArray(
-			[
-				$rtfeldman$elm_css$Css$borderTopLeftRadius(
-				$rtfeldman$elm_css$Css$pct(l)),
-				$rtfeldman$elm_css$Css$borderBottomRightRadius(
-				$rtfeldman$elm_css$Css$pct(r)),
-				$rtfeldman$elm_css$Css$borderTopRightRadius(
-				$rtfeldman$elm_css$Css$pct(t)),
-				$rtfeldman$elm_css$Css$borderBottomLeftRadius(
-				$rtfeldman$elm_css$Css$pct(b))
-			]);
+		return $rtfeldman$elm_css$Css$batch(
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Css$borderTopLeftRadius(
+					$rtfeldman$elm_css$Css$pct(l)),
+					$rtfeldman$elm_css$Css$borderBottomRightRadius(
+					$rtfeldman$elm_css$Css$pct(r)),
+					$rtfeldman$elm_css$Css$borderTopRightRadius(
+					$rtfeldman$elm_css$Css$pct(t)),
+					$rtfeldman$elm_css$Css$borderBottomLeftRadius(
+					$rtfeldman$elm_css$Css$pct(b))
+				]));
 	} else {
-		return _List_Nil;
+		return $rtfeldman$elm_css$Css$batch(_List_Nil);
 	}
 };
 var $rtfeldman$elm_css$Css$cssFunction = F2(
@@ -7547,7 +7576,7 @@ var $rtfeldman$elm_css$Css$rgb = F3(
 						[r, g, b])))
 		};
 	});
-var $author$project$Leafy$configToRbgString = function (list) {
+var $author$project$Utils$configToRbgString = function (list) {
 	if ((list.b && list.b.b) && list.b.b.b) {
 		var r = list.a;
 		var _v1 = list.b;
@@ -9060,7 +9089,6 @@ var $rtfeldman$elm_css$VirtualDom$Styled$Node = F3(
 var $rtfeldman$elm_css$VirtualDom$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$Node;
 var $rtfeldman$elm_css$Html$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$node;
 var $rtfeldman$elm_css$Html$Styled$div = $rtfeldman$elm_css$Html$Styled$node('div');
-var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
 var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
 	function (key, value) {
 		return A3(
@@ -9077,19 +9105,29 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$id = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('id');
-var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
 var $rtfeldman$elm_css$VirtualDom$Styled$KeyedNode = F3(
 	function (a, b, c) {
 		return {$: 'KeyedNode', a: a, b: b, c: c};
 	});
 var $rtfeldman$elm_css$VirtualDom$Styled$keyedNode = $rtfeldman$elm_css$VirtualDom$Styled$KeyedNode;
 var $rtfeldman$elm_css$Html$Styled$Keyed$node = $rtfeldman$elm_css$VirtualDom$Styled$keyedNode;
-var $rtfeldman$elm_css$Css$position = $rtfeldman$elm_css$Css$prop1('position');
-var $rtfeldman$elm_css$Css$PxUnits = {$: 'PxUnits'};
-var $rtfeldman$elm_css$Css$px = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PxUnits, 'px');
-var $rtfeldman$elm_css$Css$right = $rtfeldman$elm_css$Css$prop1('right');
 var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
-var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
+var $author$project$Utils$tlStyle = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Css$top(
+			$rtfeldman$elm_css$Css$px(0)),
+			$rtfeldman$elm_css$Css$left(
+			$rtfeldman$elm_css$Css$px(0))
+		]));
+var $author$project$Utils$trStyle = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Css$top(
+			$rtfeldman$elm_css$Css$px(0)),
+			$rtfeldman$elm_css$Css$right(
+			$rtfeldman$elm_css$Css$px(0))
+		]));
 var $author$project$Leafy$generateImage = F5(
 	function (colorConfigParams, borderConfigParams, level, pathKey, currentPosition) {
 		if (!level) {
@@ -9099,19 +9137,14 @@ var $author$project$Leafy$generateImage = F5(
 					_List_fromArray(
 						[
 							$rtfeldman$elm_css$Html$Styled$Attributes$css(
-							_Utils_ap(
-								_List_fromArray(
-									[
-										$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$absolute),
-										$rtfeldman$elm_css$Css$width(
-										$rtfeldman$elm_css$Css$pct(50)),
-										$rtfeldman$elm_css$Css$height(
-										$rtfeldman$elm_css$Css$pct(50)),
-										currentPosition,
-										$rtfeldman$elm_css$Css$backgroundColor(
-										$author$project$Leafy$configToRbgString(colorConfigParams.config))
-									]),
-								$author$project$Leafy$configToBorderStyle(borderConfigParams.config))),
+							_List_fromArray(
+								[
+									$author$project$Utils$boxStyle,
+									currentPosition,
+									$rtfeldman$elm_css$Css$backgroundColor(
+									$author$project$Utils$configToRbgString(colorConfigParams.config)),
+									$author$project$Utils$configToBorderStyle(borderConfigParams.config)
+								])),
 							$rtfeldman$elm_css$Html$Styled$Attributes$id(pathKey)
 						]),
 					_List_Nil),
@@ -9128,12 +9161,8 @@ var $author$project$Leafy$generateImage = F5(
 							_List_fromArray(
 								[
 									$rtfeldman$elm_css$Css$backgroundColor(
-									$author$project$Leafy$configToRbgString(colorConfigParams.config)),
-									$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$absolute),
-									$rtfeldman$elm_css$Css$width(
-									$rtfeldman$elm_css$Css$pct(50)),
-									$rtfeldman$elm_css$Css$height(
-									$rtfeldman$elm_css$Css$pct(50)),
+									$author$project$Utils$configToRbgString(colorConfigParams.config)),
+									$author$project$Utils$boxStyle,
 									currentPosition
 								]))
 						]),
@@ -9195,14 +9224,7 @@ var $author$project$Leafy$generateImage = F5(
 					{config: adjustBorder.tl}),
 				level - 1,
 				pathKey + '-tl',
-				$rtfeldman$elm_css$Css$batch(
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Css$top(
-							$rtfeldman$elm_css$Css$px(0)),
-							$rtfeldman$elm_css$Css$left(
-							$rtfeldman$elm_css$Css$px(0))
-						])));
+				$author$project$Utils$tlStyle);
 			var tlImage = _v0.a;
 			var colorMemoized2 = _v0.b;
 			var borderMemoized2 = _v0.c;
@@ -9216,14 +9238,7 @@ var $author$project$Leafy$generateImage = F5(
 					{config: adjustBorder.tr}),
 				level - 1,
 				pathKey + '-tr',
-				$rtfeldman$elm_css$Css$batch(
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Css$top(
-							$rtfeldman$elm_css$Css$px(0)),
-							$rtfeldman$elm_css$Css$right(
-							$rtfeldman$elm_css$Css$px(0))
-						])));
+				$author$project$Utils$trStyle);
 			var trImage = _v1.a;
 			var colorMemoized3 = _v1.b;
 			var borderMemoized3 = _v1.c;
@@ -9237,14 +9252,7 @@ var $author$project$Leafy$generateImage = F5(
 					{config: adjustBorder.bl}),
 				level - 1,
 				pathKey + '-bl',
-				$rtfeldman$elm_css$Css$batch(
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Css$bottom(
-							$rtfeldman$elm_css$Css$px(0)),
-							$rtfeldman$elm_css$Css$left(
-							$rtfeldman$elm_css$Css$px(0))
-						])));
+				$author$project$Utils$blStyle);
 			var blImage = _v2.a;
 			var colorMemoized4 = _v2.b;
 			var borderMemoized4 = _v2.c;
@@ -9258,14 +9266,7 @@ var $author$project$Leafy$generateImage = F5(
 					{config: adjustBorder.br}),
 				level - 1,
 				pathKey + '-br',
-				$rtfeldman$elm_css$Css$batch(
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Css$bottom(
-							$rtfeldman$elm_css$Css$px(0)),
-							$rtfeldman$elm_css$Css$right(
-							$rtfeldman$elm_css$Css$px(0))
-						])));
+				$author$project$Utils$brStyle);
 			var brImage = _v3.a;
 			var colorMemoized5 = _v3.b;
 			var borderMemoized5 = _v3.c;
@@ -10482,6 +10483,28 @@ var $author$project$FadeBorders$view = function (model) {
 			]));
 };
 var $author$project$Leafy$Randomize = {$: 'Randomize'};
+var $author$project$Utils$containerStyle = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$absolute),
+			$rtfeldman$elm_css$Css$top(
+			$rtfeldman$elm_css$Css$px(0)),
+			$rtfeldman$elm_css$Css$left(
+			$rtfeldman$elm_css$Css$px(0)),
+			$rtfeldman$elm_css$Css$right(
+			$rtfeldman$elm_css$Css$px(0)),
+			$rtfeldman$elm_css$Css$bottom(
+			$rtfeldman$elm_css$Css$px(0))
+		]));
+var $author$project$Utils$outerStyle = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$relative),
+			$rtfeldman$elm_css$Css$height(
+			$rtfeldman$elm_css$Css$pct(100)),
+			$rtfeldman$elm_css$Css$width(
+			$rtfeldman$elm_css$Css$pct(100))
+		]));
 var $author$project$Leafy$viewFrameworks = function (model) {
 	return _List_fromArray(
 		[
@@ -10493,17 +10516,7 @@ var $author$project$Leafy$viewFrameworks = function (model) {
 					[
 						$rtfeldman$elm_css$Html$Styled$Attributes$css(
 						_List_fromArray(
-							[
-								$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$absolute),
-								$rtfeldman$elm_css$Css$top(
-								$rtfeldman$elm_css$Css$px(0)),
-								$rtfeldman$elm_css$Css$left(
-								$rtfeldman$elm_css$Css$px(0)),
-								$rtfeldman$elm_css$Css$bottom(
-								$rtfeldman$elm_css$Css$px(0)),
-								$rtfeldman$elm_css$Css$right(
-								$rtfeldman$elm_css$Css$px(0))
-							]))
+							[$author$project$Utils$containerStyle]))
 					]),
 				_List_fromArray(
 					[
@@ -10517,15 +10530,7 @@ var $author$project$Leafy$viewFrameworks = function (model) {
 							model.borderParams,
 							$author$project$Leafy$maxLevel,
 							'level-' + $elm$core$String$fromInt($author$project$Leafy$maxLevel),
-							$rtfeldman$elm_css$Css$batch(
-								_List_fromArray(
-									[
-										$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$absolute),
-										$rtfeldman$elm_css$Css$width(
-										$rtfeldman$elm_css$Css$pct(100)),
-										$rtfeldman$elm_css$Css$height(
-										$rtfeldman$elm_css$Css$pct(100))
-									]))))
+							$author$project$Utils$outerStyle))
 					])))
 		]);
 };
@@ -10542,17 +10547,7 @@ var $author$project$Leafy$view = function (model) {
 					[
 						$rtfeldman$elm_css$Html$Styled$Attributes$css(
 						_List_fromArray(
-							[
-								$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$absolute),
-								$rtfeldman$elm_css$Css$top(
-								$rtfeldman$elm_css$Css$px(0)),
-								$rtfeldman$elm_css$Css$left(
-								$rtfeldman$elm_css$Css$px(0)),
-								$rtfeldman$elm_css$Css$bottom(
-								$rtfeldman$elm_css$Css$px(0)),
-								$rtfeldman$elm_css$Css$right(
-								$rtfeldman$elm_css$Css$px(0))
-							])),
+							[$author$project$Utils$containerStyle])),
 						$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Leafy$Randomize)
 					]),
 				$author$project$Leafy$viewFrameworks(model))
@@ -10560,24 +10555,7 @@ var $author$project$Leafy$view = function (model) {
 };
 var $author$project$Spirally$Randomize = {$: 'Randomize'};
 var $author$project$Spirally$cssStyles = '\ndiv {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n#container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
-var $author$project$Spirally$borderRadiusString = function (i) {
-	return function (x) {
-		return $elm$core$String$fromFloat((x / 255) * 100) + '%';
-	}(
-		A2($elm$core$Maybe$withDefault, 0, i));
-};
-var $author$project$Spirally$configToRbgString = function (list) {
-	if ((list.b && list.b.b) && list.b.b.b) {
-		var r = list.a;
-		var _v1 = list.b;
-		var g = _v1.a;
-		var _v2 = _v1.b;
-		var b = _v2.a;
-		return 'rgb(' + ($elm$core$String$fromInt(r) + (',' + ($elm$core$String$fromInt(g) + (',' + ($elm$core$String$fromInt(b) + ')')))));
-	} else {
-		return 'rgb(0,0,0)';
-	}
-};
+var $rtfeldman$elm_css$Html$Styled$Attributes$class = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('className');
 var $elm$core$Dict$singleton = F2(
 	function (key, value) {
 		return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
@@ -10587,83 +10565,55 @@ var $author$project$Spirally$generateImage = F6(
 		if (!level) {
 			return _Utils_Tuple2(
 				A2(
-					$elm$html$Html$div,
+					$rtfeldman$elm_css$Html$Styled$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('box'),
-							$elm$html$Html$Attributes$class(currentPosition),
-							$elm$html$Html$Attributes$id(pathKey),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'background-color',
-							$author$project$Spirally$configToRbgString(config)),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'border-top-left-radius',
-							$author$project$Spirally$borderRadiusString(
-								A2($elm_community$list_extra$List$Extra$getAt, 3, config))),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'border-top-right-radius',
-							$author$project$Spirally$borderRadiusString(
-								A2($elm_community$list_extra$List$Extra$getAt, 4, config))),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'border-bottom-left-radius',
-							$author$project$Spirally$borderRadiusString(
-								A2($elm_community$list_extra$List$Extra$getAt, 5, config))),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'border-bottom-right-radius',
-							$author$project$Spirally$borderRadiusString(
-								A2($elm_community$list_extra$List$Extra$getAt, 6, config)))
+							$rtfeldman$elm_css$Html$Styled$Attributes$class('box'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$class(currentPosition),
+							$rtfeldman$elm_css$Html$Styled$Attributes$id(pathKey),
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$backgroundColor(
+									$author$project$Utils$configToRbgString(config)),
+									$author$project$Utils$configToBorderStyle(
+									A2($elm$core$List$drop, 3, config))
+								]))
 						]),
 					_List_Nil),
 				memoized);
 		} else {
 			var wrapImages = function (subImages) {
 				return A3(
-					$elm$html$Html$Keyed$node,
+					$rtfeldman$elm_css$Html$Styled$Keyed$node,
 					'div',
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('box'),
-							$elm$html$Html$Attributes$class(currentPosition),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'background-color',
-							$author$project$Spirally$configToRbgString(config))
+							$rtfeldman$elm_css$Html$Styled$Attributes$class('box'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$class(currentPosition),
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$backgroundColor(
+									$author$project$Utils$configToRbgString(config))
+								]))
 						]),
 					_List_fromArray(
 						[
 							_Utils_Tuple2(
 							pathKey + '-outer',
 							A3(
-								$elm$html$Html$Keyed$node,
+								$rtfeldman$elm_css$Html$Styled$Keyed$node,
 								'div',
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$class('outer'),
-										A2(
-										$elm$html$Html$Attributes$style,
-										'border-top-left-radius',
-										$author$project$Spirally$borderRadiusString(
-											A2($elm_community$list_extra$List$Extra$getAt, 3, config))),
-										A2(
-										$elm$html$Html$Attributes$style,
-										'border-top-right-radius',
-										$author$project$Spirally$borderRadiusString(
-											A2($elm_community$list_extra$List$Extra$getAt, 4, config))),
-										A2(
-										$elm$html$Html$Attributes$style,
-										'border-bottom-left-radius',
-										$author$project$Spirally$borderRadiusString(
-											A2($elm_community$list_extra$List$Extra$getAt, 5, config))),
-										A2(
-										$elm$html$Html$Attributes$style,
-										'border-bottom-right-radius',
-										$author$project$Spirally$borderRadiusString(
-											A2($elm_community$list_extra$List$Extra$getAt, 6, config)))
+										$rtfeldman$elm_css$Html$Styled$Attributes$class('outer'),
+										$rtfeldman$elm_css$Html$Styled$Attributes$css(
+										_List_fromArray(
+											[
+												$author$project$Utils$configToBorderStyle(
+												A2($elm$core$List$drop, 3, config))
+											]))
 									]),
 								subImages))
 						]));
@@ -10743,14 +10693,22 @@ var $author$project$Spirally$viewFrameworks = function (model) {
 			_Utils_Tuple2(
 			$elm$core$String$fromInt(model.iteration),
 			A2(
-				$elm$html$Html$div,
+				$rtfeldman$elm_css$Html$Styled$div,
 				_List_fromArray(
 					[
-						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-						A2($elm$html$Html$Attributes$style, 'top', '0'),
-						A2($elm$html$Html$Attributes$style, 'bottom', '0'),
-						A2($elm$html$Html$Attributes$style, 'right', '0'),
-						A2($elm$html$Html$Attributes$style, 'left', '0')
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$absolute),
+								$rtfeldman$elm_css$Css$top(
+								$rtfeldman$elm_css$Css$px(0)),
+								$rtfeldman$elm_css$Css$bottom(
+								$rtfeldman$elm_css$Css$px(0)),
+								$rtfeldman$elm_css$Css$left(
+								$rtfeldman$elm_css$Css$px(0)),
+								$rtfeldman$elm_css$Css$right(
+								$rtfeldman$elm_css$Css$px(0))
+							]))
 					]),
 				_List_fromArray(
 					[
@@ -10767,25 +10725,25 @@ var $author$project$Spirally$viewFrameworks = function (model) {
 };
 var $author$project$Spirally$view = function (model) {
 	return A2(
-		$elm$html$Html$div,
+		$rtfeldman$elm_css$Html$Styled$div,
 		_List_Nil,
 		_List_fromArray(
 			[
 				A3(
-				$elm$html$Html$node,
+				$rtfeldman$elm_css$Html$Styled$node,
 				'style',
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text($author$project$Spirally$cssStyles)
+						$rtfeldman$elm_css$Html$Styled$text($author$project$Spirally$cssStyles)
 					])),
 				A3(
-				$elm$html$Html$Keyed$node,
+				$rtfeldman$elm_css$Html$Styled$Keyed$node,
 				'div',
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$id('container'),
-						$elm$html$Html$Events$onClick($author$project$Spirally$Randomize)
+						$rtfeldman$elm_css$Html$Styled$Attributes$id('container'),
+						$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Spirally$Randomize)
 					]),
 				$author$project$Spirally$viewFrameworks(model))
 			]));
@@ -11141,8 +11099,7 @@ var $author$project$Main$view = function (model) {
 				return A2(
 					$rtfeldman$elm_css$Html$Styled$map,
 					$author$project$Main$SpirallyMsg,
-					$rtfeldman$elm_css$Html$Styled$fromUnstyled(
-						$author$project$Spirally$view(subModel)));
+					$author$project$Spirally$view(subModel));
 			default:
 				var subModel = model.a;
 				return A2(

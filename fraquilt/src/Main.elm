@@ -93,7 +93,7 @@ view model =
                     Windows.view subModel |> Html.fromUnstyled |> Html.map WindowsMsg
 
                 SpirallyModel subModel ->
-                    Spirally.view subModel |> Html.fromUnstyled |> Html.map SpirallyMsg
+                    Spirally.view subModel |> Html.map SpirallyMsg
 
                 FadeBordersModel subModel ->
                     FadeBorders.view subModel |> Html.fromUnstyled |> Html.map FadeBordersMsg
