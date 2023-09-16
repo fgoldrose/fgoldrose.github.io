@@ -1,4 +1,4 @@
-module Main exposing (Flags, Model(..), Msg(..), main)
+module Main exposing (Flags, FraquiltVariety, Model(..), Msg(..), main)
 
 import Basic
 import Browser
@@ -84,7 +84,7 @@ view model =
                 ]
                 (Html.div
                     [ css [ Css.marginBottom (Css.px 10) ] ]
-                    [ Html.text "Change variety:" ]
+                    [ Html.text "Change type:" ]
                     :: List.map
                         (\( variety, label ) ->
                             Html.button
@@ -107,7 +107,7 @@ view model =
                                 [ Html.text label ]
                         )
                         [ ( Basic, "Basic" )
-                        , ( FadeBorders, "Fade Borders" )
+                        , ( FadeBorders, "Borders" )
                         , ( Windows, "Windows" )
                         , ( Wiggly, "Wiggly" )
                         , ( Leafy, "Leafy" )
@@ -121,19 +121,19 @@ view model =
                     Leafy.view subModel |> Html.map LeafyMsg
 
                 WigglyModel subModel ->
-                    Wiggly.view subModel |> Html.fromUnstyled |> Html.map WigglyMsg
+                    Wiggly.view subModel |> Html.map WigglyMsg
 
                 WindowsModel subModel ->
-                    Windows.view subModel |> Html.fromUnstyled |> Html.map WindowsMsg
+                    Windows.view subModel |> Html.map WindowsMsg
 
                 SpirallyModel subModel ->
                     Spirally.view subModel |> Html.map SpirallyMsg
 
                 FadeBordersModel subModel ->
-                    FadeBorders.view subModel |> Html.fromUnstyled |> Html.map FadeBordersMsg
+                    FadeBorders.view subModel |> Html.map FadeBordersMsg
 
                 BasicModel subModel ->
-                    Basic.view subModel |> Html.fromUnstyled |> Html.map BasicMsg
+                    Basic.view subModel |> Html.map BasicMsg
     in
     Html.div
         [ css

@@ -4407,52 +4407,6 @@ var _Bitwise_shiftRightZfBy = F2(function(offset, a)
 {
 	return a >>> offset;
 });
-
-
-
-function _Time_now(millisToPosix)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		callback(_Scheduler_succeed(millisToPosix(Date.now())));
-	});
-}
-
-var _Time_setInterval = F2(function(interval, task)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		var id = setInterval(function() { _Scheduler_rawSpawn(task); }, interval);
-		return function() { clearInterval(id); };
-	});
-});
-
-function _Time_here()
-{
-	return _Scheduler_binding(function(callback)
-	{
-		callback(_Scheduler_succeed(
-			A2($elm$time$Time$customZone, -(new Date().getTimezoneOffset()), _List_Nil)
-		));
-	});
-}
-
-
-function _Time_getZoneName()
-{
-	return _Scheduler_binding(function(callback)
-	{
-		try
-		{
-			var name = $elm$time$Time$Name(Intl.DateTimeFormat().resolvedOptions().timeZone);
-		}
-		catch (e)
-		{
-			var name = $elm$time$Time$Offset(new Date().getTimezoneOffset());
-		}
-		callback(_Scheduler_succeed(name));
-	});
-}
 var $author$project$Main$Basic = {$: 'Basic'};
 var $elm$core$List$cons = _List_cons;
 var $elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -5287,7 +5241,7 @@ var $author$project$Main$WindowsMsg = function (a) {
 	return {$: 'WindowsMsg', a: a};
 };
 var $author$project$Basic$AnimateLevel = {$: 'AnimateLevel'};
-var $author$project$Basic$Up = {$: 'Up'};
+var $author$project$Utils$Up = {$: 'Up'};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$random$Random$Generator = function (a) {
@@ -5375,13 +5329,13 @@ var $elm$random$Random$list = F2(
 				return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
 			});
 	});
-var $author$project$Basic$randomVariables = function (n) {
+var $author$project$Utils$randomVariables = function (n) {
 	return A2(
 		$elm$random$Random$list,
 		n,
 		A2($elm$random$Random$int, 0, 255));
 };
-var $author$project$Basic$Adjustments = F4(
+var $author$project$Utils$Adjustments = F4(
 	function (tl, tr, bl, br) {
 		return {bl: bl, br: br, tl: tl, tr: tr};
 	});
@@ -5458,156 +5412,6 @@ var $elm$random$Random$map = F2(
 					seed1);
 			});
 	});
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
-var $author$project$Basic$randomListShuffleFunction = function (listLength) {
-	return A2(
-		$elm$random$Random$map,
-		function (listOfIndices) {
-			return function (listInput) {
-				return A2(
-					$elm$core$List$indexedMap,
-					F2(
-						function (index, item) {
-							var swapInput = A2(
-								$elm$core$Maybe$withDefault,
-								index,
-								A2($elm_community$list_extra$List$Extra$getAt, index, listOfIndices));
-							return A2(
-								$elm$core$Maybe$withDefault,
-								item,
-								A2($elm_community$list_extra$List$Extra$getAt, swapInput, listInput));
-						}),
-					listInput);
-			};
-		},
-		A2(
-			$elm$random$Random$list,
-			listLength,
-			A2($elm$random$Random$int, 0, listLength - 1)));
-};
-var $author$project$Basic$randomizeAdjustments = function (listLength) {
-	var randomList = $author$project$Basic$randomListShuffleFunction(listLength);
-	return A5($elm$random$Random$map4, $author$project$Basic$Adjustments, randomList, randomList, randomList, randomList);
-};
-var $elm$random$Random$step = F2(
-	function (_v0, seed) {
-		var generator = _v0.a;
-		return generator(seed);
-	});
-var $author$project$Basic$init = function (seed) {
-	var numberOfVariables = 6;
-	var level = 0;
-	var _v0 = A2(
-		$elm$random$Random$step,
-		$author$project$Basic$randomizeAdjustments(numberOfVariables),
-		seed);
-	var adjustments = _v0.a;
-	var seedAfterAdustments = _v0.b;
-	var _v1 = A2(
-		$elm$random$Random$step,
-		$author$project$Basic$randomVariables(numberOfVariables),
-		seedAfterAdustments);
-	var newInitialColor = _v1.a;
-	var seedAfterColor = _v1.b;
-	return _Utils_Tuple2(
-		{
-			adjustments: adjustments,
-			doNextAnimationFrame: _List_fromArray(
-				[$author$project$Basic$AnimateLevel]),
-			initialVariables: newInitialColor,
-			iteration: 0,
-			level: level,
-			levelAnimationDirection: $author$project$Basic$Up,
-			numberOfVariables: numberOfVariables,
-			randomSeed: seedAfterColor
-		},
-		$elm$core$Platform$Cmd$none);
-};
-var $author$project$FadeBorders$AnimateLevel = {$: 'AnimateLevel'};
-var $author$project$FadeBorders$Up = {$: 'Up'};
-var $author$project$FadeBorders$randomVariables = function (n) {
-	return A2(
-		$elm$random$Random$list,
-		n,
-		A2($elm$random$Random$int, 0, 255));
-};
-var $author$project$FadeBorders$Adjustments = F4(
-	function (tl, tr, bl, br) {
-		return {bl: bl, br: br, tl: tl, tr: tr};
-	});
-var $author$project$FadeBorders$randomListShuffleFunction = function (listLength) {
-	return A2(
-		$elm$random$Random$map,
-		function (listOfIndices) {
-			return function (listInput) {
-				return A2(
-					$elm$core$List$indexedMap,
-					F2(
-						function (index, item) {
-							var swapInput = A2(
-								$elm$core$Maybe$withDefault,
-								index,
-								A2($elm_community$list_extra$List$Extra$getAt, index, listOfIndices));
-							return A2(
-								$elm$core$Maybe$withDefault,
-								item,
-								A2($elm_community$list_extra$List$Extra$getAt, swapInput, listInput));
-						}),
-					listInput);
-			};
-		},
-		A2(
-			$elm$random$Random$list,
-			listLength,
-			A2($elm$random$Random$int, 0, listLength - 1)));
-};
-var $author$project$FadeBorders$randomizeAdjustments = function (listLength) {
-	var randomList = $author$project$FadeBorders$randomListShuffleFunction(listLength);
-	return A5($elm$random$Random$map4, $author$project$FadeBorders$Adjustments, randomList, randomList, randomList, randomList);
-};
-var $author$project$FadeBorders$init = function (seed) {
-	var numberOfVariables = 6;
-	var level = 0;
-	var _v0 = A2(
-		$elm$random$Random$step,
-		$author$project$FadeBorders$randomizeAdjustments(numberOfVariables),
-		seed);
-	var adjustments = _v0.a;
-	var seedAfterAdustments = _v0.b;
-	var _v1 = A2(
-		$elm$random$Random$step,
-		$author$project$FadeBorders$randomVariables(numberOfVariables),
-		seedAfterAdustments);
-	var newInitialColor = _v1.a;
-	var seedAfterColor = _v1.b;
-	return _Utils_Tuple2(
-		{
-			adjustments: adjustments,
-			doNextAnimationFrame: _List_fromArray(
-				[$author$project$FadeBorders$AnimateLevel]),
-			initialVariables: newInitialColor,
-			iteration: 0,
-			level: level,
-			levelAnimationDirection: $author$project$FadeBorders$Up,
-			numberOfVariables: numberOfVariables,
-			randomSeed: seedAfterColor
-		},
-		$elm$core$Platform$Cmd$none);
-};
-var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
-var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
-var $author$project$Utils$Adjustments = F4(
-	function (tl, tr, bl, br) {
-		return {bl: bl, br: br, tl: tl, tr: tr};
-	});
 var $elm$random$Random$maxInt = 2147483647;
 var $elm$random$Random$minInt = -2147483648;
 var $elm_community$random_extra$Random$List$anyInt = A2($elm$random$Random$int, $elm$random$Random$minInt, $elm$random$Random$maxInt);
@@ -5633,6 +5437,11 @@ var $elm$random$Random$map3 = F4(
 			});
 	});
 var $elm$core$Bitwise$or = _Bitwise_or;
+var $elm$random$Random$step = F2(
+	function (_v0, seed) {
+		var generator = _v0.a;
+		return generator(seed);
+	});
 var $elm$random$Random$independentSeed = $elm$random$Random$Generator(
 	function (seed0) {
 		var makeIndependentSeed = F3(
@@ -5682,6 +5491,15 @@ var $elm_community$random_extra$Random$List$shuffle = function (list) {
 		},
 		$elm$random$Random$independentSeed);
 };
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
 var $author$project$Utils$randomListShuffleFunction = function (listLength) {
 	return A2(
 		$elm$random$Random$map,
@@ -5710,6 +5528,67 @@ var $author$project$Utils$randomizeAdjustments = function (listLength) {
 	var randomList = $author$project$Utils$randomListShuffleFunction(listLength);
 	return A5($elm$random$Random$map4, $author$project$Utils$Adjustments, randomList, randomList, randomList, randomList);
 };
+var $author$project$Basic$init = function (seed) {
+	var numberOfVariables = 6;
+	var level = 0;
+	var _v0 = A2(
+		$elm$random$Random$step,
+		$author$project$Utils$randomizeAdjustments(numberOfVariables),
+		seed);
+	var adjustments = _v0.a;
+	var seedAfterAdustments = _v0.b;
+	var _v1 = A2(
+		$elm$random$Random$step,
+		$author$project$Utils$randomVariables(numberOfVariables),
+		seedAfterAdustments);
+	var newInitialColor = _v1.a;
+	var seedAfterColor = _v1.b;
+	return _Utils_Tuple2(
+		{
+			adjustments: adjustments,
+			doNextAnimationFrame: _List_fromArray(
+				[$author$project$Basic$AnimateLevel]),
+			initialVariables: newInitialColor,
+			iteration: 0,
+			level: level,
+			levelAnimationDirection: $author$project$Utils$Up,
+			numberOfVariables: numberOfVariables,
+			randomSeed: seedAfterColor
+		},
+		$elm$core$Platform$Cmd$none);
+};
+var $author$project$FadeBorders$AnimateLevel = {$: 'AnimateLevel'};
+var $author$project$FadeBorders$init = function (seed) {
+	var numberOfVariables = 6;
+	var level = 0;
+	var _v0 = A2(
+		$elm$random$Random$step,
+		$author$project$Utils$randomizeAdjustments(numberOfVariables),
+		seed);
+	var adjustments = _v0.a;
+	var seedAfterAdustments = _v0.b;
+	var _v1 = A2(
+		$elm$random$Random$step,
+		$author$project$Utils$randomVariables(numberOfVariables),
+		seedAfterAdustments);
+	var newInitialColor = _v1.a;
+	var seedAfterColor = _v1.b;
+	return _Utils_Tuple2(
+		{
+			adjustments: adjustments,
+			doNextAnimationFrame: _List_fromArray(
+				[$author$project$FadeBorders$AnimateLevel]),
+			initialVariables: newInitialColor,
+			iteration: 0,
+			level: level,
+			levelAnimationDirection: $author$project$Utils$Up,
+			numberOfVariables: numberOfVariables,
+			randomSeed: seedAfterColor
+		},
+		$elm$core$Platform$Cmd$none);
+};
+var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
+var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
 var $author$project$Leafy$randomizeBorder = F2(
 	function (numberOfVariables, seed) {
 		var _v0 = A2(
@@ -5731,12 +5610,6 @@ var $author$project$Leafy$randomizeBorder = F2(
 			{adjustments: borderAdjustments, config: newInitial, memoized: $elm$core$Dict$empty},
 			seed2);
 	});
-var $author$project$Utils$randomVariables = function (n) {
-	return A2(
-		$elm$random$Random$list,
-		n,
-		A2($elm$random$Random$int, 0, 255));
-};
 var $author$project$Leafy$randomizeColors = F2(
 	function (numberOfVariables, seed) {
 		var _v0 = A2(
@@ -5767,51 +5640,17 @@ var $author$project$Leafy$init = function (randomSeed) {
 		{borderParams: borderParams, colorParams: colorParams, iteration: 0, numberOfVariables: numberOfVariables, randomSeed: seed2},
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Spirally$randomVariables = function (n) {
-	return A2(
-		$elm$random$Random$list,
-		n,
-		A2($elm$random$Random$int, 0, 255));
-};
-var $author$project$Spirally$randomListShuffleFunction = function (listLength) {
-	return A2(
-		$elm$random$Random$map,
-		function (listOfIndices) {
-			return function (listInput) {
-				return A2(
-					$elm$core$List$indexedMap,
-					F2(
-						function (index, item) {
-							var swapInput = A2(
-								$elm$core$Maybe$withDefault,
-								index,
-								A2($elm_community$list_extra$List$Extra$getAt, index, listOfIndices));
-							return A2(
-								$elm$core$Maybe$withDefault,
-								item,
-								A2($elm_community$list_extra$List$Extra$getAt, swapInput, listInput));
-						}),
-					listInput);
-			};
-		},
-		$elm_community$random_extra$Random$List$shuffle(
-			A2($elm$core$List$range, 0, listLength - 1)));
-};
-var $author$project$Spirally$randomizeAdjustments = function (listLength) {
-	var randomList = $author$project$Spirally$randomListShuffleFunction(listLength);
-	return A5($elm$random$Random$map4, $author$project$Utils$Adjustments, randomList, randomList, randomList, randomList);
-};
 var $author$project$Spirally$init = function (seed) {
 	var numberOfVariables = 7;
 	var _v0 = A2(
 		$elm$random$Random$step,
-		$author$project$Spirally$randomizeAdjustments(numberOfVariables),
+		$author$project$Utils$randomizeAdjustments(numberOfVariables),
 		seed);
 	var adjustments = _v0.a;
 	var seedAfterAdustments = _v0.b;
 	var _v1 = A2(
 		$elm$random$Random$step,
-		$author$project$Spirally$randomVariables(numberOfVariables),
+		$author$project$Utils$randomVariables(numberOfVariables),
 		seedAfterAdustments);
 	var newInitialColor = _v1.a;
 	var seedAfterColor = _v1.b;
@@ -5819,63 +5658,23 @@ var $author$project$Spirally$init = function (seed) {
 		{adjustments: adjustments, initialVariables: newInitialColor, iteration: 0, numberOfVariables: numberOfVariables, randomSeed: seedAfterColor},
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Wiggly$maxLevel = 6;
-var $author$project$Wiggly$randomVariables = function (n) {
-	return A2(
-		$elm$random$Random$list,
-		n,
-		A2($elm$random$Random$int, 0, 255));
-};
-var $author$project$Wiggly$Adjustments = F4(
-	function (tl, tr, bl, br) {
-		return {bl: bl, br: br, tl: tl, tr: tr};
-	});
-var $author$project$Wiggly$randomListShuffleFunction = function (listLength) {
-	return A2(
-		$elm$random$Random$map,
-		function (listOfIndices) {
-			return function (listInput) {
-				return A2(
-					$elm$core$List$indexedMap,
-					F2(
-						function (index, item) {
-							var swapInput = A2(
-								$elm$core$Maybe$withDefault,
-								index,
-								A2($elm_community$list_extra$List$Extra$getAt, index, listOfIndices));
-							return A2(
-								$elm$core$Maybe$withDefault,
-								item,
-								A2($elm_community$list_extra$List$Extra$getAt, swapInput, listInput));
-						}),
-					listInput);
-			};
-		},
-		$elm_community$random_extra$Random$List$shuffle(
-			A2($elm$core$List$range, 0, listLength - 1)));
-};
-var $author$project$Wiggly$randomizeAdjustments = function (listLength) {
-	var randomList = $author$project$Wiggly$randomListShuffleFunction(listLength);
-	return A5($elm$random$Random$map4, $author$project$Wiggly$Adjustments, randomList, randomList, randomList, randomList);
-};
 var $author$project$Wiggly$init = function (seed) {
 	var numberOfVariables = 4;
-	var level = $author$project$Wiggly$maxLevel;
 	var _v0 = A2(
 		$elm$random$Random$step,
-		$author$project$Wiggly$randomizeAdjustments(numberOfVariables),
+		$author$project$Utils$randomizeAdjustments(numberOfVariables),
 		seed);
 	var adjustments = _v0.a;
 	var seedAfterAdustments = _v0.b;
 	var _v1 = A2(
 		$elm$random$Random$step,
-		$author$project$Wiggly$randomizeAdjustments(4),
+		$author$project$Utils$randomizeAdjustments(4),
 		seedAfterAdustments);
 	var borderAdjustments = _v1.a;
 	var seedAfterBorderAdjustments = _v1.b;
 	var _v2 = A2(
 		$elm$random$Random$step,
-		$author$project$Wiggly$randomVariables(numberOfVariables),
+		$author$project$Utils$randomVariables(numberOfVariables),
 		seedAfterBorderAdjustments);
 	var newInitialColor = _v2.a;
 	var seedAfterColor = _v2.b;
@@ -5894,66 +5693,28 @@ var $author$project$Wiggly$init = function (seed) {
 		},
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Windows$randomVariables = function (n) {
-	return A2(
-		$elm$random$Random$list,
-		n,
-		A2($elm$random$Random$int, 0, 255));
-};
-var $author$project$Windows$Adjustments = F4(
-	function (tl, tr, bl, br) {
-		return {bl: bl, br: br, tl: tl, tr: tr};
-	});
-var $author$project$Windows$randomListShuffleFunction = function (listLength) {
-	return A2(
-		$elm$random$Random$map,
-		function (listOfIndices) {
-			return function (listInput) {
-				return A2(
-					$elm$core$List$indexedMap,
-					F2(
-						function (index, item) {
-							var swapInput = A2(
-								$elm$core$Maybe$withDefault,
-								index,
-								A2($elm_community$list_extra$List$Extra$getAt, index, listOfIndices));
-							return A2(
-								$elm$core$Maybe$withDefault,
-								item,
-								A2($elm_community$list_extra$List$Extra$getAt, swapInput, listInput));
-						}),
-					listInput);
-			};
-		},
-		$elm_community$random_extra$Random$List$shuffle(
-			A2($elm$core$List$range, 0, listLength - 1)));
-};
-var $author$project$Windows$randomizeAdjustments = function (listLength) {
-	var randomList = $author$project$Windows$randomListShuffleFunction(listLength);
-	return A5($elm$random$Random$map4, $author$project$Windows$Adjustments, randomList, randomList, randomList, randomList);
-};
 var $author$project$Windows$init = function (seed) {
 	var numberOfVariables = 4;
 	var _v0 = A2(
 		$elm$random$Random$step,
-		$author$project$Windows$randomizeAdjustments(numberOfVariables),
+		$author$project$Utils$randomizeAdjustments(numberOfVariables),
 		seed);
 	var adjustments = _v0.a;
 	var seedAfterAdustments = _v0.b;
 	var _v1 = A2(
 		$elm$random$Random$step,
-		$author$project$Windows$randomizeAdjustments(4),
+		$author$project$Utils$randomizeAdjustments(4),
 		seedAfterAdustments);
 	var borderAdjustments = _v1.a;
 	var seedAfterBorderAdjustments = _v1.b;
 	var _v2 = A2(
 		$elm$random$Random$step,
-		$author$project$Windows$randomVariables(numberOfVariables),
+		$author$project$Utils$randomVariables(numberOfVariables),
 		seedAfterBorderAdjustments);
 	var newInitialColor = _v2.a;
 	var seedAfterColor = _v2.b;
 	return _Utils_Tuple2(
-		{adjustments: adjustments, borderAdjustments: borderAdjustments, doNextAnimationFrame: _List_Nil, initialVariables: newInitialColor, iteration: 0, numberOfVariables: numberOfVariables, randomSeed: seedAfterColor},
+		{adjustments: adjustments, borderAdjustments: borderAdjustments, initialVariables: newInitialColor, iteration: 0, numberOfVariables: numberOfVariables, randomSeed: seedAfterColor},
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Cmd$map = _Platform_map;
@@ -6183,422 +5944,19 @@ var $author$project$Spirally$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$none;
 };
 var $author$project$Wiggly$RandomizeBorder = {$: 'RandomizeBorder'};
-var $elm$time$Time$Every = F2(
-	function (a, b) {
-		return {$: 'Every', a: a, b: b};
-	});
-var $elm$time$Time$State = F2(
-	function (taggers, processes) {
-		return {processes: processes, taggers: taggers};
-	});
-var $elm$time$Time$init = $elm$core$Task$succeed(
-	A2($elm$time$Time$State, $elm$core$Dict$empty, $elm$core$Dict$empty));
-var $elm$core$Basics$compare = _Utils_compare;
-var $elm$core$Dict$get = F2(
-	function (targetKey, dict) {
-		get:
-		while (true) {
-			if (dict.$ === 'RBEmpty_elm_builtin') {
-				return $elm$core$Maybe$Nothing;
-			} else {
-				var key = dict.b;
-				var value = dict.c;
-				var left = dict.d;
-				var right = dict.e;
-				var _v1 = A2($elm$core$Basics$compare, targetKey, key);
-				switch (_v1.$) {
-					case 'LT':
-						var $temp$targetKey = targetKey,
-							$temp$dict = left;
-						targetKey = $temp$targetKey;
-						dict = $temp$dict;
-						continue get;
-					case 'EQ':
-						return $elm$core$Maybe$Just(value);
-					default:
-						var $temp$targetKey = targetKey,
-							$temp$dict = right;
-						targetKey = $temp$targetKey;
-						dict = $temp$dict;
-						continue get;
-				}
-			}
-		}
-	});
-var $elm$core$Dict$Black = {$: 'Black'};
-var $elm$core$Dict$RBNode_elm_builtin = F5(
-	function (a, b, c, d, e) {
-		return {$: 'RBNode_elm_builtin', a: a, b: b, c: c, d: d, e: e};
-	});
-var $elm$core$Dict$Red = {$: 'Red'};
-var $elm$core$Dict$balance = F5(
-	function (color, key, value, left, right) {
-		if ((right.$ === 'RBNode_elm_builtin') && (right.a.$ === 'Red')) {
-			var _v1 = right.a;
-			var rK = right.b;
-			var rV = right.c;
-			var rLeft = right.d;
-			var rRight = right.e;
-			if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) {
-				var _v3 = left.a;
-				var lK = left.b;
-				var lV = left.c;
-				var lLeft = left.d;
-				var lRight = left.e;
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					$elm$core$Dict$Red,
-					key,
-					value,
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, lK, lV, lLeft, lRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, rK, rV, rLeft, rRight));
-			} else {
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					color,
-					rK,
-					rV,
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, left, rLeft),
-					rRight);
-			}
-		} else {
-			if ((((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) && (left.d.$ === 'RBNode_elm_builtin')) && (left.d.a.$ === 'Red')) {
-				var _v5 = left.a;
-				var lK = left.b;
-				var lV = left.c;
-				var _v6 = left.d;
-				var _v7 = _v6.a;
-				var llK = _v6.b;
-				var llV = _v6.c;
-				var llLeft = _v6.d;
-				var llRight = _v6.e;
-				var lRight = left.e;
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					$elm$core$Dict$Red,
-					lK,
-					lV,
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, llK, llV, llLeft, llRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, lRight, right));
-			} else {
-				return A5($elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
-			}
-		}
-	});
-var $elm$core$Dict$insertHelp = F3(
-	function (key, value, dict) {
-		if (dict.$ === 'RBEmpty_elm_builtin') {
-			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
-		} else {
-			var nColor = dict.a;
-			var nKey = dict.b;
-			var nValue = dict.c;
-			var nLeft = dict.d;
-			var nRight = dict.e;
-			var _v1 = A2($elm$core$Basics$compare, key, nKey);
-			switch (_v1.$) {
-				case 'LT':
-					return A5(
-						$elm$core$Dict$balance,
-						nColor,
-						nKey,
-						nValue,
-						A3($elm$core$Dict$insertHelp, key, value, nLeft),
-						nRight);
-				case 'EQ':
-					return A5($elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
-				default:
-					return A5(
-						$elm$core$Dict$balance,
-						nColor,
-						nKey,
-						nValue,
-						nLeft,
-						A3($elm$core$Dict$insertHelp, key, value, nRight));
-			}
-		}
-	});
-var $elm$core$Dict$insert = F3(
-	function (key, value, dict) {
-		var _v0 = A3($elm$core$Dict$insertHelp, key, value, dict);
-		if ((_v0.$ === 'RBNode_elm_builtin') && (_v0.a.$ === 'Red')) {
-			var _v1 = _v0.a;
-			var k = _v0.b;
-			var v = _v0.c;
-			var l = _v0.d;
-			var r = _v0.e;
-			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, k, v, l, r);
-		} else {
-			var x = _v0;
-			return x;
-		}
-	});
-var $elm$time$Time$addMySub = F2(
-	function (_v0, state) {
-		var interval = _v0.a;
-		var tagger = _v0.b;
-		var _v1 = A2($elm$core$Dict$get, interval, state);
-		if (_v1.$ === 'Nothing') {
-			return A3(
-				$elm$core$Dict$insert,
-				interval,
-				_List_fromArray(
-					[tagger]),
-				state);
-		} else {
-			var taggers = _v1.a;
-			return A3(
-				$elm$core$Dict$insert,
-				interval,
-				A2($elm$core$List$cons, tagger, taggers),
-				state);
-		}
-	});
-var $elm$core$Dict$foldl = F3(
-	function (func, acc, dict) {
-		foldl:
-		while (true) {
-			if (dict.$ === 'RBEmpty_elm_builtin') {
-				return acc;
-			} else {
-				var key = dict.b;
-				var value = dict.c;
-				var left = dict.d;
-				var right = dict.e;
-				var $temp$func = func,
-					$temp$acc = A3(
-					func,
-					key,
-					value,
-					A3($elm$core$Dict$foldl, func, acc, left)),
-					$temp$dict = right;
-				func = $temp$func;
-				acc = $temp$acc;
-				dict = $temp$dict;
-				continue foldl;
-			}
-		}
-	});
-var $elm$core$Dict$merge = F6(
-	function (leftStep, bothStep, rightStep, leftDict, rightDict, initialResult) {
-		var stepState = F3(
-			function (rKey, rValue, _v0) {
-				stepState:
-				while (true) {
-					var list = _v0.a;
-					var result = _v0.b;
-					if (!list.b) {
-						return _Utils_Tuple2(
-							list,
-							A3(rightStep, rKey, rValue, result));
-					} else {
-						var _v2 = list.a;
-						var lKey = _v2.a;
-						var lValue = _v2.b;
-						var rest = list.b;
-						if (_Utils_cmp(lKey, rKey) < 0) {
-							var $temp$rKey = rKey,
-								$temp$rValue = rValue,
-								$temp$_v0 = _Utils_Tuple2(
-								rest,
-								A3(leftStep, lKey, lValue, result));
-							rKey = $temp$rKey;
-							rValue = $temp$rValue;
-							_v0 = $temp$_v0;
-							continue stepState;
-						} else {
-							if (_Utils_cmp(lKey, rKey) > 0) {
-								return _Utils_Tuple2(
-									list,
-									A3(rightStep, rKey, rValue, result));
-							} else {
-								return _Utils_Tuple2(
-									rest,
-									A4(bothStep, lKey, lValue, rValue, result));
-							}
-						}
-					}
-				}
-			});
-		var _v3 = A3(
-			$elm$core$Dict$foldl,
-			stepState,
-			_Utils_Tuple2(
-				$elm$core$Dict$toList(leftDict),
-				initialResult),
-			rightDict);
-		var leftovers = _v3.a;
-		var intermediateResult = _v3.b;
-		return A3(
-			$elm$core$List$foldl,
-			F2(
-				function (_v4, result) {
-					var k = _v4.a;
-					var v = _v4.b;
-					return A3(leftStep, k, v, result);
-				}),
-			intermediateResult,
-			leftovers);
-	});
-var $elm$time$Time$Name = function (a) {
-	return {$: 'Name', a: a};
+var $elm$browser$Browser$AnimationManager$onAnimationFrame = function (tagger) {
+	return $elm$browser$Browser$AnimationManager$subscription(
+		$elm$browser$Browser$AnimationManager$Time(tagger));
 };
-var $elm$time$Time$Offset = function (a) {
-	return {$: 'Offset', a: a};
-};
-var $elm$time$Time$Zone = F2(
-	function (a, b) {
-		return {$: 'Zone', a: a, b: b};
-	});
-var $elm$time$Time$customZone = $elm$time$Time$Zone;
-var $elm$time$Time$setInterval = _Time_setInterval;
-var $elm$time$Time$spawnHelp = F3(
-	function (router, intervals, processes) {
-		if (!intervals.b) {
-			return $elm$core$Task$succeed(processes);
-		} else {
-			var interval = intervals.a;
-			var rest = intervals.b;
-			var spawnTimer = $elm$core$Process$spawn(
-				A2(
-					$elm$time$Time$setInterval,
-					interval,
-					A2($elm$core$Platform$sendToSelf, router, interval)));
-			var spawnRest = function (id) {
-				return A3(
-					$elm$time$Time$spawnHelp,
-					router,
-					rest,
-					A3($elm$core$Dict$insert, interval, id, processes));
-			};
-			return A2($elm$core$Task$andThen, spawnRest, spawnTimer);
-		}
-	});
-var $elm$time$Time$onEffects = F3(
-	function (router, subs, _v0) {
-		var processes = _v0.processes;
-		var rightStep = F3(
-			function (_v6, id, _v7) {
-				var spawns = _v7.a;
-				var existing = _v7.b;
-				var kills = _v7.c;
-				return _Utils_Tuple3(
-					spawns,
-					existing,
-					A2(
-						$elm$core$Task$andThen,
-						function (_v5) {
-							return kills;
-						},
-						$elm$core$Process$kill(id)));
-			});
-		var newTaggers = A3($elm$core$List$foldl, $elm$time$Time$addMySub, $elm$core$Dict$empty, subs);
-		var leftStep = F3(
-			function (interval, taggers, _v4) {
-				var spawns = _v4.a;
-				var existing = _v4.b;
-				var kills = _v4.c;
-				return _Utils_Tuple3(
-					A2($elm$core$List$cons, interval, spawns),
-					existing,
-					kills);
-			});
-		var bothStep = F4(
-			function (interval, taggers, id, _v3) {
-				var spawns = _v3.a;
-				var existing = _v3.b;
-				var kills = _v3.c;
-				return _Utils_Tuple3(
-					spawns,
-					A3($elm$core$Dict$insert, interval, id, existing),
-					kills);
-			});
-		var _v1 = A6(
-			$elm$core$Dict$merge,
-			leftStep,
-			bothStep,
-			rightStep,
-			newTaggers,
-			processes,
-			_Utils_Tuple3(
-				_List_Nil,
-				$elm$core$Dict$empty,
-				$elm$core$Task$succeed(_Utils_Tuple0)));
-		var spawnList = _v1.a;
-		var existingDict = _v1.b;
-		var killTask = _v1.c;
-		return A2(
-			$elm$core$Task$andThen,
-			function (newProcesses) {
-				return $elm$core$Task$succeed(
-					A2($elm$time$Time$State, newTaggers, newProcesses));
-			},
-			A2(
-				$elm$core$Task$andThen,
-				function (_v2) {
-					return A3($elm$time$Time$spawnHelp, router, spawnList, existingDict);
-				},
-				killTask));
-	});
-var $elm$time$Time$now = _Time_now($elm$time$Time$millisToPosix);
-var $elm$time$Time$onSelfMsg = F3(
-	function (router, interval, state) {
-		var _v0 = A2($elm$core$Dict$get, interval, state.taggers);
-		if (_v0.$ === 'Nothing') {
-			return $elm$core$Task$succeed(state);
-		} else {
-			var taggers = _v0.a;
-			var tellTaggers = function (time) {
-				return $elm$core$Task$sequence(
-					A2(
-						$elm$core$List$map,
-						function (tagger) {
-							return A2(
-								$elm$core$Platform$sendToApp,
-								router,
-								tagger(time));
-						},
-						taggers));
-			};
-			return A2(
-				$elm$core$Task$andThen,
-				function (_v1) {
-					return $elm$core$Task$succeed(state);
-				},
-				A2($elm$core$Task$andThen, tellTaggers, $elm$time$Time$now));
-		}
-	});
-var $elm$time$Time$subMap = F2(
-	function (f, _v0) {
-		var interval = _v0.a;
-		var tagger = _v0.b;
-		return A2(
-			$elm$time$Time$Every,
-			interval,
-			A2($elm$core$Basics$composeL, f, tagger));
-	});
-_Platform_effectManagers['Time'] = _Platform_createManager($elm$time$Time$init, $elm$time$Time$onEffects, $elm$time$Time$onSelfMsg, 0, $elm$time$Time$subMap);
-var $elm$time$Time$subscription = _Platform_leaf('Time');
-var $elm$time$Time$every = F2(
-	function (interval, tagger) {
-		return $elm$time$Time$subscription(
-			A2($elm$time$Time$Every, interval, tagger));
-	});
+var $elm$browser$Browser$Events$onAnimationFrame = $elm$browser$Browser$AnimationManager$onAnimationFrame;
 var $author$project$Wiggly$subscriptions = function (_v0) {
-	return A2(
-		$elm$time$Time$every,
-		300,
+	return $elm$browser$Browser$Events$onAnimationFrame(
 		function (_v1) {
 			return $author$project$Wiggly$RandomizeBorder;
 		});
 };
-var $author$project$Windows$GotNextAnimationFrame = {$: 'GotNextAnimationFrame'};
 var $author$project$Windows$subscriptions = function (_v0) {
-	var doNextAnimationFrame = _v0.doNextAnimationFrame;
-	return $elm$core$List$isEmpty(doNextAnimationFrame) ? $elm$core$Platform$Sub$none : $elm$browser$Browser$Events$onAnimationFrameDelta(
-		function (_v1) {
-			return $author$project$Windows$GotNextAnimationFrame;
-		});
+	return $elm$core$Platform$Sub$none;
 };
 var $author$project$Main$subscriptions = function (model) {
 	switch (model.$) {
@@ -6796,6 +6154,146 @@ var $rtfeldman$elm_css$Hash$fromString = function (str) {
 		$rtfeldman$elm_hex$Hex$toString(
 			A2($robinheghan$murmur3$Murmur3$hashString, $rtfeldman$elm_css$Hash$initialSeed, str)));
 };
+var $elm$core$Basics$compare = _Utils_compare;
+var $elm$core$Dict$get = F2(
+	function (targetKey, dict) {
+		get:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var _v1 = A2($elm$core$Basics$compare, targetKey, key);
+				switch (_v1.$) {
+					case 'LT':
+						var $temp$targetKey = targetKey,
+							$temp$dict = left;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+					case 'EQ':
+						return $elm$core$Maybe$Just(value);
+					default:
+						var $temp$targetKey = targetKey,
+							$temp$dict = right;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+				}
+			}
+		}
+	});
+var $elm$core$Dict$Black = {$: 'Black'};
+var $elm$core$Dict$RBNode_elm_builtin = F5(
+	function (a, b, c, d, e) {
+		return {$: 'RBNode_elm_builtin', a: a, b: b, c: c, d: d, e: e};
+	});
+var $elm$core$Dict$Red = {$: 'Red'};
+var $elm$core$Dict$balance = F5(
+	function (color, key, value, left, right) {
+		if ((right.$ === 'RBNode_elm_builtin') && (right.a.$ === 'Red')) {
+			var _v1 = right.a;
+			var rK = right.b;
+			var rV = right.c;
+			var rLeft = right.d;
+			var rRight = right.e;
+			if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) {
+				var _v3 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var lLeft = left.d;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Red,
+					key,
+					value,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					color,
+					rK,
+					rV,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, left, rLeft),
+					rRight);
+			}
+		} else {
+			if ((((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) && (left.d.$ === 'RBNode_elm_builtin')) && (left.d.a.$ === 'Red')) {
+				var _v5 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var _v6 = left.d;
+				var _v7 = _v6.a;
+				var llK = _v6.b;
+				var llV = _v6.c;
+				var llLeft = _v6.d;
+				var llRight = _v6.e;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Red,
+					lK,
+					lV,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, llK, llV, llLeft, llRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, lRight, right));
+			} else {
+				return A5($elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
+			}
+		}
+	});
+var $elm$core$Dict$insertHelp = F3(
+	function (key, value, dict) {
+		if (dict.$ === 'RBEmpty_elm_builtin') {
+			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
+		} else {
+			var nColor = dict.a;
+			var nKey = dict.b;
+			var nValue = dict.c;
+			var nLeft = dict.d;
+			var nRight = dict.e;
+			var _v1 = A2($elm$core$Basics$compare, key, nKey);
+			switch (_v1.$) {
+				case 'LT':
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						A3($elm$core$Dict$insertHelp, key, value, nLeft),
+						nRight);
+				case 'EQ':
+					return A5($elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
+				default:
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						nLeft,
+						A3($elm$core$Dict$insertHelp, key, value, nRight));
+			}
+		}
+	});
+var $elm$core$Dict$insert = F3(
+	function (key, value, dict) {
+		var _v0 = A3($elm$core$Dict$insertHelp, key, value, dict);
+		if ((_v0.$ === 'RBNode_elm_builtin') && (_v0.a.$ === 'Red')) {
+			var _v1 = _v0.a;
+			var k = _v0.b;
+			var v = _v0.c;
+			var l = _v0.d;
+			var r = _v0.e;
+			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, k, v, l, r);
+		} else {
+			var x = _v0;
+			return x;
+		}
+	});
 var $rtfeldman$elm_css$VirtualDom$Styled$accumulateStyles = F2(
 	function (_v0, styles) {
 		var isCssStyles = _v0.b;
@@ -7130,6 +6628,31 @@ var $elm$core$List$singleton = function (value) {
 		[value]);
 };
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$core$Dict$foldl = F3(
+	function (func, acc, dict) {
+		foldl:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return acc;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var $temp$func = func,
+					$temp$acc = A3(
+					func,
+					key,
+					value,
+					A3($elm$core$Dict$foldl, func, acc, left)),
+					$temp$dict = right;
+				func = $temp$func;
+				acc = $temp$acc;
+				dict = $temp$dict;
+				continue foldl;
+			}
+		}
+	});
 var $rtfeldman$elm_css$VirtualDom$Styled$classnameStandin = '\u0007';
 var $elm$core$String$replace = F3(
 	function (before, after, string) {
@@ -7412,8 +6935,8 @@ var $author$project$Main$getRandomSeed = function (model) {
 			return subModel.randomSeed;
 	}
 };
-var $author$project$Basic$Down = {$: 'Down'};
-var $author$project$Basic$None = {$: 'None'};
+var $author$project$Utils$Down = {$: 'Down'};
+var $author$project$Utils$None = {$: 'None'};
 var $author$project$Basic$maxLevel = 7;
 var $author$project$Basic$update = F2(
 	function (msg, model) {
@@ -7422,13 +6945,13 @@ var $author$project$Basic$update = F2(
 				if (_Utils_eq(model.level, -1)) {
 					var _v1 = A2(
 						$elm$random$Random$step,
-						$author$project$Basic$randomizeAdjustments(model.numberOfVariables),
+						$author$project$Utils$randomizeAdjustments(model.numberOfVariables),
 						model.randomSeed);
 					var randomizedAdjustments = _v1.a;
 					var seedAfterAdustments = _v1.b;
 					var _v2 = A2(
 						$elm$random$Random$step,
-						$author$project$Basic$randomVariables(model.numberOfVariables),
+						$author$project$Utils$randomVariables(model.numberOfVariables),
 						seedAfterAdustments);
 					var newInitialColor = _v2.a;
 					var newSeed = _v2.b;
@@ -7466,9 +6989,9 @@ var $author$project$Basic$update = F2(
 					});
 				if (_Utils_eq(model.level, $author$project$Basic$maxLevel)) {
 					return _Utils_Tuple2(
-						_Utils_eq(model.levelAnimationDirection, $author$project$Basic$None) ? A2(
+						_Utils_eq(model.levelAnimationDirection, $author$project$Utils$None) ? A2(
 							changeLevel,
-							$author$project$Basic$Down,
+							$author$project$Utils$Down,
 							_Utils_update(
 								model,
 								{
@@ -7476,10 +6999,10 @@ var $author$project$Basic$update = F2(
 										model.doNextAnimationFrame,
 										_List_fromArray(
 											[$author$project$Basic$AnimateLevel])),
-									levelAnimationDirection: $author$project$Basic$Down
+									levelAnimationDirection: $author$project$Utils$Down
 								})) : _Utils_update(
 							model,
-							{levelAnimationDirection: $author$project$Basic$None}),
+							{levelAnimationDirection: $author$project$Utils$None}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					if (_Utils_eq(model.level, -1)) {
@@ -7488,13 +7011,13 @@ var $author$project$Basic$update = F2(
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{levelAnimationDirection: $author$project$Basic$Up}),
+									{levelAnimationDirection: $author$project$Utils$Up}),
 								$elm$core$Platform$Cmd$none);
 						} else {
 							return _Utils_Tuple2(
 								A2(
 									changeLevel,
-									$author$project$Basic$Up,
+									$author$project$Utils$Up,
 									_Utils_update(
 										model,
 										{
@@ -7502,7 +7025,7 @@ var $author$project$Basic$update = F2(
 												model.doNextAnimationFrame,
 												_List_fromArray(
 													[$author$project$Basic$AnimateLevel])),
-											levelAnimationDirection: $author$project$Basic$Up
+											levelAnimationDirection: $author$project$Utils$Up
 										})),
 								$elm$core$Platform$Cmd$none);
 						}
@@ -7522,18 +7045,6 @@ var $author$project$Basic$update = F2(
 							$elm$core$Platform$Cmd$none);
 					}
 				}
-			case 'DoNextAnimationFrame':
-				var doMsg = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							doNextAnimationFrame: _Utils_ap(
-								model.doNextAnimationFrame,
-								_List_fromArray(
-									[doMsg]))
-						}),
-					$elm$core$Platform$Cmd$none);
 			default:
 				var _v5 = model.doNextAnimationFrame;
 				if (_v5.b) {
@@ -7552,8 +7063,6 @@ var $author$project$Basic$update = F2(
 				}
 		}
 	});
-var $author$project$FadeBorders$Down = {$: 'Down'};
-var $author$project$FadeBorders$None = {$: 'None'};
 var $author$project$FadeBorders$maxLevel = 7;
 var $author$project$FadeBorders$update = F2(
 	function (msg, model) {
@@ -7562,13 +7071,13 @@ var $author$project$FadeBorders$update = F2(
 				if (_Utils_eq(model.level, -1)) {
 					var _v1 = A2(
 						$elm$random$Random$step,
-						$author$project$FadeBorders$randomizeAdjustments(model.numberOfVariables),
+						$author$project$Utils$randomizeAdjustments(model.numberOfVariables),
 						model.randomSeed);
 					var randomizedAdjustments = _v1.a;
 					var seedAfterAdustments = _v1.b;
 					var _v2 = A2(
 						$elm$random$Random$step,
-						$author$project$FadeBorders$randomVariables(model.numberOfVariables),
+						$author$project$Utils$randomVariables(model.numberOfVariables),
 						seedAfterAdustments);
 					var newInitialColor = _v2.a;
 					var newSeed = _v2.b;
@@ -7606,9 +7115,9 @@ var $author$project$FadeBorders$update = F2(
 					});
 				if (_Utils_eq(model.level, $author$project$FadeBorders$maxLevel)) {
 					return _Utils_Tuple2(
-						_Utils_eq(model.levelAnimationDirection, $author$project$FadeBorders$None) ? A2(
+						_Utils_eq(model.levelAnimationDirection, $author$project$Utils$None) ? A2(
 							changeLevel,
-							$author$project$FadeBorders$Down,
+							$author$project$Utils$Down,
 							_Utils_update(
 								model,
 								{
@@ -7616,10 +7125,10 @@ var $author$project$FadeBorders$update = F2(
 										model.doNextAnimationFrame,
 										_List_fromArray(
 											[$author$project$FadeBorders$AnimateLevel])),
-									levelAnimationDirection: $author$project$FadeBorders$Down
+									levelAnimationDirection: $author$project$Utils$Down
 								})) : _Utils_update(
 							model,
-							{levelAnimationDirection: $author$project$FadeBorders$None}),
+							{levelAnimationDirection: $author$project$Utils$None}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					if (_Utils_eq(model.level, -1)) {
@@ -7628,13 +7137,13 @@ var $author$project$FadeBorders$update = F2(
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{levelAnimationDirection: $author$project$FadeBorders$Up}),
+									{levelAnimationDirection: $author$project$Utils$Up}),
 								$elm$core$Platform$Cmd$none);
 						} else {
 							return _Utils_Tuple2(
 								A2(
 									changeLevel,
-									$author$project$FadeBorders$Up,
+									$author$project$Utils$Up,
 									_Utils_update(
 										model,
 										{
@@ -7642,7 +7151,7 @@ var $author$project$FadeBorders$update = F2(
 												model.doNextAnimationFrame,
 												_List_fromArray(
 													[$author$project$FadeBorders$AnimateLevel])),
-											levelAnimationDirection: $author$project$FadeBorders$Up
+											levelAnimationDirection: $author$project$Utils$Up
 										})),
 								$elm$core$Platform$Cmd$none);
 						}
@@ -7755,7 +7264,7 @@ var $rtfeldman$elm_css$Css$Internal$lengthConverter = F3(
 		};
 	});
 var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
-var $author$project$Utils$configToBorderStyle = function (list) {
+var $author$project$Utils$configToBorderRadius = function (list) {
 	if (((list.b && list.b.b) && list.b.b.b) && list.b.b.b.b) {
 		var l = list.a;
 		var _v1 = list.b;
@@ -9334,7 +8843,7 @@ var $author$project$Leafy$generateImage = F5(
 								[
 									$rtfeldman$elm_css$Css$backgroundColor(
 									$author$project$Utils$configToRbgString(colorConfigParams.config)),
-									$author$project$Utils$configToBorderStyle(borderConfigParams.config)
+									$author$project$Utils$configToBorderRadius(borderConfigParams.config)
 								]))
 						]),
 					_List_Nil),
@@ -9501,13 +9010,13 @@ var $author$project$Spirally$update = F2(
 	function (msg, model) {
 		var _v1 = A2(
 			$elm$random$Random$step,
-			$author$project$Spirally$randomizeAdjustments(model.numberOfVariables),
+			$author$project$Utils$randomizeAdjustments(model.numberOfVariables),
 			model.randomSeed);
 		var randomizedAdjustments = _v1.a;
 		var seedAfterAdustments = _v1.b;
 		var _v2 = A2(
 			$elm$random$Random$step,
-			$author$project$Spirally$randomVariables(model.numberOfVariables),
+			$author$project$Utils$randomVariables(model.numberOfVariables),
 			seedAfterAdustments);
 		var newInitialColor = _v2.a;
 		var newSeed = _v2.b;
@@ -9517,17 +9026,17 @@ var $author$project$Spirally$update = F2(
 				{adjustments: randomizedAdjustments, initialVariables: newInitialColor, iteration: model.iteration + 1, randomSeed: newSeed}),
 			$elm$core$Platform$Cmd$none);
 	});
-var $elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$string(string));
-	});
-var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
-var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
-var $author$project$Wiggly$configToBorderStyle = function (list) {
+var $rtfeldman$elm_css$Css$borderColor = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'border-color', c.value);
+};
+var $rtfeldman$elm_css$Css$borderStyle = $rtfeldman$elm_css$Css$prop1('border-style');
+var $rtfeldman$elm_css$Css$borderBottomWidth = $rtfeldman$elm_css$Css$prop1('border-bottom-width');
+var $rtfeldman$elm_css$Css$borderLeftWidth = $rtfeldman$elm_css$Css$prop1('border-left-width');
+var $rtfeldman$elm_css$Css$borderRightWidth = $rtfeldman$elm_css$Css$prop1('border-right-width');
+var $rtfeldman$elm_css$Css$borderTopWidth = $rtfeldman$elm_css$Css$prop1('border-top-width');
+var $rtfeldman$elm_css$Css$PxUnits = {$: 'PxUnits'};
+var $rtfeldman$elm_css$Css$px = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PxUnits, 'px');
+var $author$project$Utils$configToBorderWidth = function (list) {
 	if (((list.b && list.b.b) && list.b.b.b) && list.b.b.b.b) {
 		var l = list.a;
 		var _v1 = list.b;
@@ -9536,59 +9045,40 @@ var $author$project$Wiggly$configToBorderStyle = function (list) {
 		var t = _v2.a;
 		var _v3 = _v2.b;
 		var b = _v3.a;
-		return _List_fromArray(
-			[
-				A2(
-				$elm$html$Html$Attributes$style,
-				'border-left-width',
-				$elm$core$String$fromInt(l) + 'px'),
-				A2(
-				$elm$html$Html$Attributes$style,
-				'border-right-width',
-				$elm$core$String$fromInt(r) + 'px'),
-				A2(
-				$elm$html$Html$Attributes$style,
-				'border-top-width',
-				$elm$core$String$fromInt(t) + 'px'),
-				A2(
-				$elm$html$Html$Attributes$style,
-				'border-bottom-width',
-				$elm$core$String$fromInt(b) + 'px')
-			]);
+		return $rtfeldman$elm_css$Css$batch(
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Css$borderTopWidth(
+					$rtfeldman$elm_css$Css$px(t)),
+					$rtfeldman$elm_css$Css$borderBottomWidth(
+					$rtfeldman$elm_css$Css$px(b)),
+					$rtfeldman$elm_css$Css$borderLeftWidth(
+					$rtfeldman$elm_css$Css$px(l)),
+					$rtfeldman$elm_css$Css$borderRightWidth(
+					$rtfeldman$elm_css$Css$px(r))
+				]));
 	} else {
-		return _List_Nil;
+		return $rtfeldman$elm_css$Css$batch(_List_Nil);
 	}
 };
-var $author$project$Wiggly$configToRbgString = function (list) {
-	if ((list.b && list.b.b) && list.b.b.b) {
-		var r = list.a;
-		var _v1 = list.b;
-		var g = _v1.a;
-		var _v2 = _v1.b;
-		var b = _v2.a;
-		return 'rgb(' + ($elm$core$String$fromInt(r) + (',' + ($elm$core$String$fromInt(g) + (',' + ($elm$core$String$fromInt(b) + ')')))));
-	} else {
-		return 'rgb(0,0,0)';
-	}
-};
-var $elm$html$Html$div = _VirtualDom_node('div');
-var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
-var $elm$html$Html$Keyed$node = $elm$virtual_dom$VirtualDom$keyedNode;
+var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
 var $author$project$Wiggly$generateImage = F5(
 	function (colorConfigParams, borderConfigParams, level, pathKey, currentPosition) {
 		if (!level) {
 			return _Utils_Tuple3(
 				A2(
-					$elm$html$Html$div,
+					$rtfeldman$elm_css$Html$Styled$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('box'),
-							$elm$html$Html$Attributes$class(currentPosition),
-							$elm$html$Html$Attributes$id(pathKey),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'background-color',
-							$author$project$Wiggly$configToRbgString(colorConfigParams.config))
+							$rtfeldman$elm_css$Html$Styled$Attributes$class('box'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$class(currentPosition),
+							$rtfeldman$elm_css$Html$Styled$Attributes$id(pathKey),
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$backgroundColor(
+									$author$project$Utils$configToRbgString(colorConfigParams.config))
+								]))
 						]),
 					_List_Nil),
 				colorConfigParams,
@@ -9596,24 +9086,23 @@ var $author$project$Wiggly$generateImage = F5(
 		} else {
 			var wrapImages = function (subImages) {
 				return A3(
-					$elm$html$Html$Keyed$node,
+					$rtfeldman$elm_css$Html$Styled$Keyed$node,
 					'div',
-					_Utils_ap(
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('box'),
-								$elm$html$Html$Attributes$class(currentPosition),
-								A2($elm$html$Html$Attributes$style, 'border-style', 'solid'),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'border-color',
-								$author$project$Wiggly$configToRbgString(colorConfigParams.config)),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'background-color',
-								$author$project$Wiggly$configToRbgString(colorConfigParams.config))
-							]),
-						$author$project$Wiggly$configToBorderStyle(borderConfigParams.config)),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$class('box'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$class(currentPosition),
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
+									$rtfeldman$elm_css$Css$borderColor(
+									$author$project$Utils$configToRbgString(colorConfigParams.config)),
+									$rtfeldman$elm_css$Css$backgroundColor(
+									$author$project$Utils$configToRbgString(colorConfigParams.config)),
+									$author$project$Utils$configToBorderWidth(borderConfigParams.config)
+								]))
+						]),
 					subImages);
 			};
 			var adjustColor = A2(
@@ -9731,18 +9220,19 @@ var $author$project$Wiggly$generateImage = F5(
 				borderMemoized5);
 		}
 	});
+var $author$project$Wiggly$maxLevel = 6;
 var $author$project$Wiggly$update = F2(
 	function (msg, model) {
 		if (msg.$ === 'Randomize') {
 			var _v1 = A2(
 				$elm$random$Random$step,
-				$author$project$Wiggly$randomizeAdjustments(model.numberOfVariables),
+				$author$project$Utils$randomizeAdjustments(model.numberOfVariables),
 				model.randomSeed);
 			var randomizedAdjustments = _v1.a;
 			var seedAfterAdustments = _v1.b;
 			var _v2 = A2(
 				$elm$random$Random$step,
-				$author$project$Wiggly$randomizeAdjustments(4),
+				$author$project$Utils$randomizeAdjustments(4),
 				seedAfterAdustments);
 			var borderAdjustments = _v2.a;
 			var seedAfterBorderAdjustments = _v2.b;
@@ -9754,7 +9244,7 @@ var $author$project$Wiggly$update = F2(
 			};
 			var _v3 = A2(
 				$elm$random$Random$step,
-				$author$project$Wiggly$randomVariables(model.numberOfVariables),
+				$author$project$Utils$randomVariables(model.numberOfVariables),
 				seedAfterBorderAdjustments);
 			var newInitialColor = _v3.a;
 			var newSeed = _v3.b;
@@ -9776,7 +9266,7 @@ var $author$project$Wiggly$update = F2(
 		} else {
 			var _v5 = A2(
 				$elm$random$Random$step,
-				$author$project$Wiggly$randomizeAdjustments(4),
+				$author$project$Utils$randomizeAdjustments(4),
 				model.randomSeed);
 			var borderAdjustments = _v5.a;
 			var seed1 = _v5.b;
@@ -9801,47 +9291,29 @@ var $author$project$Wiggly$update = F2(
 	});
 var $author$project$Windows$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'Randomize') {
-			var _v1 = A2(
-				$elm$random$Random$step,
-				$author$project$Windows$randomizeAdjustments(model.numberOfVariables),
-				model.randomSeed);
-			var randomizedAdjustments = _v1.a;
-			var seedAfterAdustments = _v1.b;
-			var _v2 = A2(
-				$elm$random$Random$step,
-				$author$project$Windows$randomizeAdjustments(4),
-				seedAfterAdustments);
-			var borderAdjustments = _v2.a;
-			var seedAfterBorderAdjustments = _v2.b;
-			var _v3 = A2(
-				$elm$random$Random$step,
-				$author$project$Windows$randomVariables(model.numberOfVariables),
-				seedAfterBorderAdjustments);
-			var newInitialColor = _v3.a;
-			var newSeed = _v3.b;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{adjustments: randomizedAdjustments, borderAdjustments: borderAdjustments, initialVariables: newInitialColor, iteration: model.iteration + 1, randomSeed: newSeed}),
-				$elm$core$Platform$Cmd$none);
-		} else {
-			var _v4 = model.doNextAnimationFrame;
-			if (_v4.b) {
-				var first = _v4.a;
-				var rest = _v4.b;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{doNextAnimationFrame: rest}),
-					A2(
-						$elm$core$Task$perform,
-						$elm$core$Basics$identity,
-						$elm$core$Task$succeed(first)));
-			} else {
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			}
-		}
+		var _v1 = A2(
+			$elm$random$Random$step,
+			$author$project$Utils$randomizeAdjustments(model.numberOfVariables),
+			model.randomSeed);
+		var randomizedAdjustments = _v1.a;
+		var seedAfterAdustments = _v1.b;
+		var _v2 = A2(
+			$elm$random$Random$step,
+			$author$project$Utils$randomizeAdjustments(4),
+			seedAfterAdustments);
+		var borderAdjustments = _v2.a;
+		var seedAfterBorderAdjustments = _v2.b;
+		var _v3 = A2(
+			$elm$random$Random$step,
+			$author$project$Utils$randomVariables(model.numberOfVariables),
+			seedAfterBorderAdjustments);
+		var newInitialColor = _v3.a;
+		var newSeed = _v3.b;
+		return _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{adjustments: randomizedAdjustments, borderAdjustments: borderAdjustments, initialVariables: newInitialColor, iteration: model.iteration + 1, randomSeed: newSeed}),
+			$elm$core$Platform$Cmd$none);
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
@@ -9961,11 +9433,6 @@ var $rtfeldman$elm_css$Css$fontWeight = function (_v0) {
 	var value = _v0.value;
 	return A2($rtfeldman$elm_css$Css$property, 'font-weight', value);
 };
-var $rtfeldman$elm_css$VirtualDom$Styled$Unstyled = function (a) {
-	return {$: 'Unstyled', a: a};
-};
-var $rtfeldman$elm_css$VirtualDom$Styled$unstyledNode = $rtfeldman$elm_css$VirtualDom$Styled$Unstyled;
-var $rtfeldman$elm_css$Html$Styled$fromUnstyled = $rtfeldman$elm_css$VirtualDom$Styled$unstyledNode;
 var $rtfeldman$elm_css$Css$withPrecedingHash = function (str) {
 	return A2($elm$core$String$startsWith, '#', str) ? str : A2(
 		$elm$core$String$cons,
@@ -10416,6 +9883,9 @@ var $rtfeldman$elm_css$VirtualDom$Styled$NodeNS = F4(
 	function (a, b, c, d) {
 		return {$: 'NodeNS', a: a, b: b, c: c, d: d};
 	});
+var $rtfeldman$elm_css$VirtualDom$Styled$Unstyled = function (a) {
+	return {$: 'Unstyled', a: a};
+};
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$virtual_dom$VirtualDom$mapAttribute = _VirtualDom_mapAttribute;
 var $rtfeldman$elm_css$VirtualDom$Styled$mapAttribute = F2(
@@ -10558,8 +10028,6 @@ var $rtfeldman$elm_css$Html$Styled$Events$onClick = function (msg) {
 var $rtfeldman$elm_css$Css$padding = $rtfeldman$elm_css$Css$prop1('padding');
 var $rtfeldman$elm_css$Css$pointer = {cursor: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'pointer'};
 var $rtfeldman$elm_css$Css$position = $rtfeldman$elm_css$Css$prop1('position');
-var $rtfeldman$elm_css$Css$PxUnits = {$: 'PxUnits'};
-var $rtfeldman$elm_css$Css$px = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PxUnits, 'px');
 var $rtfeldman$elm_css$Css$relative = {position: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'relative'};
 var $rtfeldman$elm_css$Css$right = $rtfeldman$elm_css$Css$prop1('right');
 var $rtfeldman$elm_css$Css$sansSerif = {fontFamily: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'sans-serif'};
@@ -10569,56 +10037,31 @@ var $rtfeldman$elm_css$VirtualDom$Styled$text = function (str) {
 };
 var $rtfeldman$elm_css$Html$Styled$text = $rtfeldman$elm_css$VirtualDom$Styled$text;
 var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
-var $author$project$Basic$cssStyles = '\ndiv {\n    box-sizing: border-box;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n#container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
-var $elm$html$Html$node = $elm$virtual_dom$VirtualDom$node;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Utils$cssStyles = '\ndiv {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n.container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
 var $author$project$Basic$Randomize = {$: 'Randomize'};
-var $author$project$Basic$configToRbgString = function (list) {
-	if ((list.b && list.b.b) && list.b.b.b) {
-		var r = list.a;
-		var _v1 = list.b;
-		var g = _v1.a;
-		var _v2 = _v1.b;
-		var b = _v2.a;
-		return 'rgb(' + ($elm$core$String$fromInt(r) + (',' + ($elm$core$String$fromInt(g) + (',' + ($elm$core$String$fromInt(b) + ')')))));
-	} else {
-		return 'rgb(0,0,0)';
-	}
-};
 var $author$project$Basic$generateImage = F5(
 	function (adjustments, level, pathKey, currentPosition, config) {
 		return (!level) ? A2(
-			$elm$html$Html$div,
+			$rtfeldman$elm_css$Html$Styled$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('box'),
-					$elm$html$Html$Attributes$class(currentPosition),
-					$elm$html$Html$Attributes$id(pathKey),
-					A2(
-					$elm$html$Html$Attributes$style,
-					'background-color',
-					$author$project$Basic$configToRbgString(config))
+					$rtfeldman$elm_css$Html$Styled$Attributes$class('box'),
+					$rtfeldman$elm_css$Html$Styled$Attributes$class(currentPosition),
+					$rtfeldman$elm_css$Html$Styled$Attributes$id(pathKey),
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$backgroundColor(
+							$author$project$Utils$configToRbgString(config))
+						]))
 				]),
 			_List_Nil) : A3(
-			$elm$html$Html$Keyed$node,
+			$rtfeldman$elm_css$Html$Styled$Keyed$node,
 			'div',
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('box'),
-					$elm$html$Html$Attributes$class(currentPosition)
+					$rtfeldman$elm_css$Html$Styled$Attributes$class('box'),
+					$rtfeldman$elm_css$Html$Styled$Attributes$class(currentPosition)
 				]),
 			_List_fromArray(
 				[
@@ -10660,14 +10103,35 @@ var $author$project$Basic$generateImage = F5(
 						adjustments.br(config)))
 				]));
 	});
-var $elm$virtual_dom$VirtualDom$lazy5 = _VirtualDom_lazy5;
-var $elm$html$Html$Lazy$lazy5 = $elm$virtual_dom$VirtualDom$lazy5;
+var $elm$virtual_dom$VirtualDom$lazy6 = _VirtualDom_lazy6;
+var $rtfeldman$elm_css$VirtualDom$Styled$lazyHelp5 = F6(
+	function (fn, arg1, arg2, arg3, arg4, arg5) {
+		return $rtfeldman$elm_css$VirtualDom$Styled$toUnstyled(
+			A5(fn, arg1, arg2, arg3, arg4, arg5));
+	});
+var $rtfeldman$elm_css$VirtualDom$Styled$lazy5 = F6(
+	function (fn, arg1, arg2, arg3, arg4, arg5) {
+		return $rtfeldman$elm_css$VirtualDom$Styled$Unstyled(
+			A7($elm$virtual_dom$VirtualDom$lazy6, $rtfeldman$elm_css$VirtualDom$Styled$lazyHelp5, fn, arg1, arg2, arg3, arg4, arg5));
+	});
+var $rtfeldman$elm_css$Html$Styled$Lazy$lazy5 = $rtfeldman$elm_css$VirtualDom$Styled$lazy5;
 var $author$project$Basic$onTransitionEnd = function (msg) {
 	return A2(
-		$elm$html$Html$Events$on,
+		$rtfeldman$elm_css$Html$Styled$Events$on,
 		'transitionend',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $rtfeldman$elm_css$Css$opacity = $rtfeldman$elm_css$Css$prop1('opacity');
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $rtfeldman$elm_css$VirtualDom$Styled$style = F2(
+	function (key, val) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$style, key, val),
+			false,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$style = $rtfeldman$elm_css$VirtualDom$Styled$style;
 var $author$project$Basic$viewFrameworks = function (model) {
 	return A2(
 		$elm$core$List$map,
@@ -10675,27 +10139,25 @@ var $author$project$Basic$viewFrameworks = function (model) {
 			return _Utils_Tuple2(
 				$elm$core$String$fromInt(level),
 				A2(
-					$elm$html$Html$div,
+					$rtfeldman$elm_css$Html$Styled$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$id(
+							$rtfeldman$elm_css$Html$Styled$Attributes$id(
 							'level-' + $elm$core$String$fromInt(level)),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'opacity',
-							(_Utils_cmp(level, model.level) < 1) ? '1' : '0'),
-							A2($elm$html$Html$Attributes$style, 'transition', 'opacity 0.5s linear'),
-							A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-							A2($elm$html$Html$Attributes$style, 'top', '0'),
-							A2($elm$html$Html$Attributes$style, 'bottom', '0'),
-							A2($elm$html$Html$Attributes$style, 'right', '0'),
-							A2($elm$html$Html$Attributes$style, 'left', '0'),
-							(!level) ? $author$project$Basic$onTransitionEnd($author$project$Basic$Randomize) : $elm$html$Html$Attributes$class('')
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$opacity(
+									(_Utils_cmp(level, model.level) < 1) ? $rtfeldman$elm_css$Css$num(1) : $rtfeldman$elm_css$Css$num(0))
+								])),
+							$rtfeldman$elm_css$Html$Styled$Attributes$class('container'),
+							A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'transition', 'opacity 0.5s linear'),
+							(!level) ? $author$project$Basic$onTransitionEnd($author$project$Basic$Randomize) : $rtfeldman$elm_css$Html$Styled$Attributes$class('')
 						]),
 					_List_fromArray(
 						[
 							A6(
-							$elm$html$Html$Lazy$lazy5,
+							$rtfeldman$elm_css$Html$Styled$Lazy$lazy5,
 							$author$project$Basic$generateImage,
 							model.adjustments,
 							level,
@@ -10708,70 +10170,63 @@ var $author$project$Basic$viewFrameworks = function (model) {
 };
 var $author$project$Basic$view = function (model) {
 	return A2(
-		$elm$html$Html$div,
+		$rtfeldman$elm_css$Html$Styled$div,
 		_List_Nil,
 		_List_fromArray(
 			[
 				A3(
-				$elm$html$Html$node,
+				$rtfeldman$elm_css$Html$Styled$node,
 				'style',
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text($author$project$Basic$cssStyles)
+						$rtfeldman$elm_css$Html$Styled$text($author$project$Utils$cssStyles)
 					])),
 				A3(
-				$elm$html$Html$Keyed$node,
+				$rtfeldman$elm_css$Html$Styled$Keyed$node,
 				'div',
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$id('container'),
-						_Utils_eq(model.level, $author$project$Basic$maxLevel) ? $elm$html$Html$Events$onClick($author$project$Basic$AnimateLevel) : $elm$html$Html$Attributes$class('')
+						$rtfeldman$elm_css$Html$Styled$Attributes$class('container'),
+						_Utils_eq(model.level, $author$project$Basic$maxLevel) ? $rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Basic$AnimateLevel) : $rtfeldman$elm_css$Html$Styled$Attributes$class('')
 					]),
 				$author$project$Basic$viewFrameworks(model))
 			]));
 };
-var $author$project$FadeBorders$cssStyles = '\ndiv {\n    box-sizing: border-box;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n#container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
 var $author$project$FadeBorders$Randomize = {$: 'Randomize'};
-var $author$project$FadeBorders$configToRbgString = function (list) {
-	if ((list.b && list.b.b) && list.b.b.b) {
-		var r = list.a;
-		var _v1 = list.b;
-		var g = _v1.a;
-		var _v2 = _v1.b;
-		var b = _v2.a;
-		return 'rgb(' + ($elm$core$String$fromInt(r) + (',' + ($elm$core$String$fromInt(g) + (',' + ($elm$core$String$fromInt(b) + ')')))));
-	} else {
-		return 'rgb(0,0,0)';
-	}
-};
+var $rtfeldman$elm_css$Css$borderWidth = $rtfeldman$elm_css$Css$prop1('border-width');
 var $author$project$FadeBorders$generateImage = F5(
 	function (adjustments, level, pathKey, currentPosition, config) {
 		return (!level) ? A2(
-			$elm$html$Html$div,
+			$rtfeldman$elm_css$Html$Styled$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('box'),
-					$elm$html$Html$Attributes$class(currentPosition),
-					$elm$html$Html$Attributes$id(pathKey),
-					A2(
-					$elm$html$Html$Attributes$style,
-					'background-color',
-					$author$project$FadeBorders$configToRbgString(config))
+					$rtfeldman$elm_css$Html$Styled$Attributes$class('box'),
+					$rtfeldman$elm_css$Html$Styled$Attributes$class(currentPosition),
+					$rtfeldman$elm_css$Html$Styled$Attributes$id(pathKey),
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$backgroundColor(
+							$author$project$Utils$configToRbgString(config))
+						]))
 				]),
 			_List_Nil) : A3(
-			$elm$html$Html$Keyed$node,
+			$rtfeldman$elm_css$Html$Styled$Keyed$node,
 			'div',
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('box'),
-					$elm$html$Html$Attributes$class(currentPosition),
-					A2(
-					$elm$html$Html$Attributes$style,
-					'border-color',
-					$author$project$FadeBorders$configToRbgString(config)),
-					A2($elm$html$Html$Attributes$style, 'border-width', '1px'),
-					A2($elm$html$Html$Attributes$style, 'border-style', 'solid')
+					$rtfeldman$elm_css$Html$Styled$Attributes$class('box'),
+					$rtfeldman$elm_css$Html$Styled$Attributes$class(currentPosition),
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$borderColor(
+							$author$project$Utils$configToRbgString(config)),
+							$rtfeldman$elm_css$Css$borderWidth(
+							$rtfeldman$elm_css$Css$px(1)),
+							$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid)
+						]))
 				]),
 			_List_fromArray(
 				[
@@ -10815,7 +10270,7 @@ var $author$project$FadeBorders$generateImage = F5(
 	});
 var $author$project$FadeBorders$onTransitionEnd = function (msg) {
 	return A2(
-		$elm$html$Html$Events$on,
+		$rtfeldman$elm_css$Html$Styled$Events$on,
 		'transitionend',
 		$elm$json$Json$Decode$succeed(msg));
 };
@@ -10826,27 +10281,23 @@ var $author$project$FadeBorders$viewFrameworks = function (model) {
 			return _Utils_Tuple2(
 				$elm$core$String$fromInt(level),
 				A2(
-					$elm$html$Html$div,
+					$rtfeldman$elm_css$Html$Styled$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$id(
+							$rtfeldman$elm_css$Html$Styled$Attributes$id(
 							'level-' + $elm$core$String$fromInt(level)),
 							A2(
-							$elm$html$Html$Attributes$style,
+							$rtfeldman$elm_css$Html$Styled$Attributes$style,
 							'opacity',
 							(_Utils_cmp(level, model.level) < 1) ? '1' : '0'),
-							A2($elm$html$Html$Attributes$style, 'transition', 'opacity 0.5s linear'),
-							A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-							A2($elm$html$Html$Attributes$style, 'top', '0'),
-							A2($elm$html$Html$Attributes$style, 'bottom', '0'),
-							A2($elm$html$Html$Attributes$style, 'right', '0'),
-							A2($elm$html$Html$Attributes$style, 'left', '0'),
-							(!level) ? $author$project$FadeBorders$onTransitionEnd($author$project$FadeBorders$Randomize) : $elm$html$Html$Attributes$class('')
+							A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'transition', 'opacity 0.5s linear'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$class('container'),
+							(!level) ? $author$project$FadeBorders$onTransitionEnd($author$project$FadeBorders$Randomize) : $rtfeldman$elm_css$Html$Styled$Attributes$class('')
 						]),
 					_List_fromArray(
 						[
 							A6(
-							$elm$html$Html$Lazy$lazy5,
+							$rtfeldman$elm_css$Html$Styled$Lazy$lazy5,
 							$author$project$FadeBorders$generateImage,
 							model.adjustments,
 							level,
@@ -10859,31 +10310,30 @@ var $author$project$FadeBorders$viewFrameworks = function (model) {
 };
 var $author$project$FadeBorders$view = function (model) {
 	return A2(
-		$elm$html$Html$div,
+		$rtfeldman$elm_css$Html$Styled$div,
 		_List_Nil,
 		_List_fromArray(
 			[
 				A3(
-				$elm$html$Html$node,
+				$rtfeldman$elm_css$Html$Styled$node,
 				'style',
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text($author$project$FadeBorders$cssStyles)
+						$rtfeldman$elm_css$Html$Styled$text($author$project$Utils$cssStyles)
 					])),
 				A3(
-				$elm$html$Html$Keyed$node,
+				$rtfeldman$elm_css$Html$Styled$Keyed$node,
 				'div',
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$id('container'),
-						_Utils_eq(model.level, $author$project$FadeBorders$maxLevel) ? $elm$html$Html$Events$onClick($author$project$FadeBorders$AnimateLevel) : $elm$html$Html$Attributes$class('')
+						$rtfeldman$elm_css$Html$Styled$Attributes$class('container'),
+						_Utils_eq(model.level, $author$project$FadeBorders$maxLevel) ? $rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$FadeBorders$AnimateLevel) : $rtfeldman$elm_css$Html$Styled$Attributes$class('')
 					]),
 				$author$project$FadeBorders$viewFrameworks(model))
 			]));
 };
 var $author$project$Leafy$Randomize = {$: 'Randomize'};
-var $author$project$Utils$cssStyles = '\ndiv {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n.container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
 var $author$project$Leafy$view = function (model) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -10925,7 +10375,6 @@ var $author$project$Leafy$view = function (model) {
 			]));
 };
 var $author$project$Spirally$Randomize = {$: 'Randomize'};
-var $author$project$Spirally$cssStyles = '\ndiv {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n#container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
 var $elm$core$Dict$singleton = F2(
 	function (key, value) {
 		return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
@@ -10946,7 +10395,7 @@ var $author$project$Spirally$generateImage = F6(
 								[
 									$rtfeldman$elm_css$Css$backgroundColor(
 									$author$project$Utils$configToRbgString(config)),
-									$author$project$Utils$configToBorderStyle(
+									$author$project$Utils$configToBorderRadius(
 									A2($elm$core$List$drop, 3, config))
 								]))
 						]),
@@ -10981,7 +10430,7 @@ var $author$project$Spirally$generateImage = F6(
 										$rtfeldman$elm_css$Html$Styled$Attributes$css(
 										_List_fromArray(
 											[
-												$author$project$Utils$configToBorderStyle(
+												$author$project$Utils$configToBorderRadius(
 												A2($elm$core$List$drop, 3, config))
 											]))
 									]),
@@ -11105,35 +10554,30 @@ var $author$project$Spirally$view = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						$rtfeldman$elm_css$Html$Styled$text($author$project$Spirally$cssStyles)
+						$rtfeldman$elm_css$Html$Styled$text($author$project$Utils$cssStyles)
 					])),
 				A3(
 				$rtfeldman$elm_css$Html$Styled$Keyed$node,
 				'div',
 				_List_fromArray(
 					[
-						$rtfeldman$elm_css$Html$Styled$Attributes$id('container'),
+						$rtfeldman$elm_css$Html$Styled$Attributes$class('container'),
 						$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Spirally$Randomize)
 					]),
 				$author$project$Spirally$viewFrameworks(model))
 			]));
 };
 var $author$project$Wiggly$Randomize = {$: 'Randomize'};
-var $author$project$Wiggly$cssStyles = '\ndiv {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n#container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
 var $author$project$Wiggly$viewFrameworks = function (model) {
 	return _List_fromArray(
 		[
 			_Utils_Tuple2(
 			$elm$core$String$fromInt(model.iteration),
 			A2(
-				$elm$html$Html$div,
+				$rtfeldman$elm_css$Html$Styled$div,
 				_List_fromArray(
 					[
-						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-						A2($elm$html$Html$Attributes$style, 'top', '0'),
-						A2($elm$html$Html$Attributes$style, 'bottom', '0'),
-						A2($elm$html$Html$Attributes$style, 'right', '0'),
-						A2($elm$html$Html$Attributes$style, 'left', '0')
+						$rtfeldman$elm_css$Html$Styled$Attributes$class('container')
 					]),
 				_List_fromArray(
 					[
@@ -11153,90 +10597,47 @@ var $author$project$Wiggly$viewFrameworks = function (model) {
 };
 var $author$project$Wiggly$view = function (model) {
 	return A2(
-		$elm$html$Html$div,
+		$rtfeldman$elm_css$Html$Styled$div,
 		_List_Nil,
 		_List_fromArray(
 			[
 				A3(
-				$elm$html$Html$node,
+				$rtfeldman$elm_css$Html$Styled$node,
 				'style',
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text($author$project$Wiggly$cssStyles)
+						$rtfeldman$elm_css$Html$Styled$text($author$project$Utils$cssStyles)
 					])),
 				A3(
-				$elm$html$Html$Keyed$node,
+				$rtfeldman$elm_css$Html$Styled$Keyed$node,
 				'div',
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$id('container'),
-						$elm$html$Html$Events$onClick($author$project$Wiggly$Randomize)
+						$rtfeldman$elm_css$Html$Styled$Attributes$class('container'),
+						$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Wiggly$Randomize)
 					]),
 				$author$project$Wiggly$viewFrameworks(model))
 			]));
 };
 var $author$project$Windows$Randomize = {$: 'Randomize'};
-var $author$project$Windows$cssStyles = '\ndiv {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n#container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
-var $author$project$Windows$configToBorderStyle = function (list) {
-	if (((list.b && list.b.b) && list.b.b.b) && list.b.b.b.b) {
-		var l = list.a;
-		var _v1 = list.b;
-		var r = _v1.a;
-		var _v2 = _v1.b;
-		var t = _v2.a;
-		var _v3 = _v2.b;
-		var b = _v3.a;
-		return _List_fromArray(
-			[
-				A2(
-				$elm$html$Html$Attributes$style,
-				'border-left-width',
-				$elm$core$String$fromInt(l) + 'px'),
-				A2(
-				$elm$html$Html$Attributes$style,
-				'border-right-width',
-				$elm$core$String$fromInt(r) + 'px'),
-				A2(
-				$elm$html$Html$Attributes$style,
-				'border-top-width',
-				$elm$core$String$fromInt(t) + 'px'),
-				A2(
-				$elm$html$Html$Attributes$style,
-				'border-bottom-width',
-				$elm$core$String$fromInt(b) + 'px')
-			]);
-	} else {
-		return _List_Nil;
-	}
-};
-var $author$project$Windows$configToRbgString = function (list) {
-	if ((list.b && list.b.b) && list.b.b.b) {
-		var r = list.a;
-		var _v1 = list.b;
-		var g = _v1.a;
-		var _v2 = _v1.b;
-		var b = _v2.a;
-		return 'rgb(' + ($elm$core$String$fromInt(r) + (',' + ($elm$core$String$fromInt(g) + (',' + ($elm$core$String$fromInt(b) + ')')))));
-	} else {
-		return 'rgb(0,0,0)';
-	}
-};
 var $author$project$Windows$generateImage = F5(
 	function (colorConfigParams, borderConfigParams, level, pathKey, currentPosition) {
 		if (!level) {
 			return _Utils_Tuple3(
 				A2(
-					$elm$html$Html$div,
+					$rtfeldman$elm_css$Html$Styled$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('box'),
-							$elm$html$Html$Attributes$class(currentPosition),
-							$elm$html$Html$Attributes$id(pathKey),
-							A2(
-							$elm$html$Html$Attributes$style,
-							'background-color',
-							$author$project$Windows$configToRbgString(colorConfigParams.config))
+							$rtfeldman$elm_css$Html$Styled$Attributes$class('box'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$class(currentPosition),
+							$rtfeldman$elm_css$Html$Styled$Attributes$id(pathKey),
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$backgroundColor(
+									$author$project$Utils$configToRbgString(colorConfigParams.config))
+								]))
 						]),
 					_List_Nil),
 				colorConfigParams,
@@ -11244,24 +10645,23 @@ var $author$project$Windows$generateImage = F5(
 		} else {
 			var wrapImages = function (subImages) {
 				return A3(
-					$elm$html$Html$Keyed$node,
+					$rtfeldman$elm_css$Html$Styled$Keyed$node,
 					'div',
-					_Utils_ap(
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('box'),
-								$elm$html$Html$Attributes$class(currentPosition),
-								A2($elm$html$Html$Attributes$style, 'border-style', 'solid'),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'border-color',
-								$author$project$Windows$configToRbgString(colorConfigParams.config)),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'background-color',
-								$author$project$Windows$configToRbgString(colorConfigParams.config))
-							]),
-						$author$project$Windows$configToBorderStyle(borderConfigParams.config)),
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$class('box'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$class(currentPosition),
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
+									$rtfeldman$elm_css$Css$borderColor(
+									$author$project$Utils$configToRbgString(colorConfigParams.config)),
+									$rtfeldman$elm_css$Css$backgroundColor(
+									$author$project$Utils$configToRbgString(colorConfigParams.config)),
+									$author$project$Utils$configToBorderWidth(borderConfigParams.config)
+								]))
+						]),
 					subImages);
 			};
 			var adjustColor = A2(
@@ -11386,14 +10786,10 @@ var $author$project$Windows$viewFrameworks = function (model) {
 			_Utils_Tuple2(
 			$elm$core$String$fromInt(model.iteration),
 			A2(
-				$elm$html$Html$div,
+				$rtfeldman$elm_css$Html$Styled$div,
 				_List_fromArray(
 					[
-						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-						A2($elm$html$Html$Attributes$style, 'top', '0'),
-						A2($elm$html$Html$Attributes$style, 'bottom', '0'),
-						A2($elm$html$Html$Attributes$style, 'right', '0'),
-						A2($elm$html$Html$Attributes$style, 'left', '0')
+						$rtfeldman$elm_css$Html$Styled$Attributes$class('container')
 					]),
 				_List_fromArray(
 					[
@@ -11418,25 +10814,25 @@ var $author$project$Windows$viewFrameworks = function (model) {
 };
 var $author$project$Windows$view = function (model) {
 	return A2(
-		$elm$html$Html$div,
+		$rtfeldman$elm_css$Html$Styled$div,
 		_List_Nil,
 		_List_fromArray(
 			[
 				A3(
-				$elm$html$Html$node,
+				$rtfeldman$elm_css$Html$Styled$node,
 				'style',
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text($author$project$Windows$cssStyles)
+						$rtfeldman$elm_css$Html$Styled$text($author$project$Utils$cssStyles)
 					])),
 				A3(
-				$elm$html$Html$Keyed$node,
+				$rtfeldman$elm_css$Html$Styled$Keyed$node,
 				'div',
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$id('container'),
-						$elm$html$Html$Events$onClick($author$project$Windows$Randomize)
+						$rtfeldman$elm_css$Html$Styled$Attributes$class('container'),
+						$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Windows$Randomize)
 					]),
 				$author$project$Windows$viewFrameworks(model))
 			]));
@@ -11455,15 +10851,13 @@ var $author$project$Main$view = function (model) {
 				return A2(
 					$rtfeldman$elm_css$Html$Styled$map,
 					$author$project$Main$WigglyMsg,
-					$rtfeldman$elm_css$Html$Styled$fromUnstyled(
-						$author$project$Wiggly$view(subModel)));
+					$author$project$Wiggly$view(subModel));
 			case 'WindowsModel':
 				var subModel = model.a;
 				return A2(
 					$rtfeldman$elm_css$Html$Styled$map,
 					$author$project$Main$WindowsMsg,
-					$rtfeldman$elm_css$Html$Styled$fromUnstyled(
-						$author$project$Windows$view(subModel)));
+					$author$project$Windows$view(subModel));
 			case 'SpirallyModel':
 				var subModel = model.a;
 				return A2(
@@ -11475,15 +10869,13 @@ var $author$project$Main$view = function (model) {
 				return A2(
 					$rtfeldman$elm_css$Html$Styled$map,
 					$author$project$Main$FadeBordersMsg,
-					$rtfeldman$elm_css$Html$Styled$fromUnstyled(
-						$author$project$FadeBorders$view(subModel)));
+					$author$project$FadeBorders$view(subModel));
 			default:
 				var subModel = model.a;
 				return A2(
 					$rtfeldman$elm_css$Html$Styled$map,
 					$author$project$Main$BasicMsg,
-					$rtfeldman$elm_css$Html$Styled$fromUnstyled(
-						$author$project$Basic$view(subModel)));
+					$author$project$Basic$view(subModel));
 		}
 	}();
 	var controls = A2(
@@ -11520,7 +10912,7 @@ var $author$project$Main$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$rtfeldman$elm_css$Html$Styled$text('Change variety:')
+						$rtfeldman$elm_css$Html$Styled$text('Change type:')
 					])),
 			A2(
 				$elm$core$List$map,
@@ -11566,7 +10958,7 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						_Utils_Tuple2($author$project$Main$Basic, 'Basic'),
-						_Utils_Tuple2($author$project$Main$FadeBorders, 'Fade Borders'),
+						_Utils_Tuple2($author$project$Main$FadeBorders, 'Borders'),
 						_Utils_Tuple2($author$project$Main$Windows, 'Windows'),
 						_Utils_Tuple2($author$project$Main$Wiggly, 'Wiggly'),
 						_Utils_Tuple2($author$project$Main$Leafy, 'Leafy'),

@@ -1,9 +1,13 @@
-module Utils exposing (..)
+module Utils exposing (Adjustments, Config, Direction(..), configToBorderRadius, configToBorderWidth, configToRbgString, cssStyles, randomVariables, randomizeAdjustments)
 
 import Css
 import List.Extra as List
 import Random
 import Random.List
+
+
+type alias Config =
+    List Int
 
 
 type alias Adjustments a =
@@ -12,6 +16,12 @@ type alias Adjustments a =
     , bl : a -> a
     , br : a -> a
     }
+
+
+type Direction
+    = Up
+    | Down
+    | None
 
 
 configToRbgString : List Int -> Css.Color
@@ -24,8 +34,8 @@ configToRbgString list =
             Css.rgb 0 0 0
 
 
-configToBorderStyle : List Int -> Css.Style
-configToBorderStyle list =
+configToBorderRadius : List Int -> Css.Style
+configToBorderRadius list =
     case list of
         l :: r :: t :: b :: _ ->
             Css.batch
@@ -33,6 +43,21 @@ configToBorderStyle list =
                 , Css.borderBottomRightRadius (Css.pct (toFloat r))
                 , Css.borderTopRightRadius (Css.pct (toFloat t))
                 , Css.borderBottomLeftRadius (Css.pct (toFloat b))
+                ]
+
+        _ ->
+            Css.batch []
+
+
+configToBorderWidth : List Int -> Css.Style
+configToBorderWidth list =
+    case list of
+        l :: r :: t :: b :: _ ->
+            Css.batch
+                [ Css.borderTopWidth (Css.px (toFloat t))
+                , Css.borderBottomWidth (Css.px (toFloat b))
+                , Css.borderLeftWidth (Css.px (toFloat l))
+                , Css.borderRightWidth (Css.px (toFloat r))
                 ]
 
         _ ->

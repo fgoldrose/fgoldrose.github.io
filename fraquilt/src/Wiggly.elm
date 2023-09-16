@@ -1,50 +1,15 @@
-module Wiggly exposing (Adjustments, Config, ConfigParams, Memoized, Model, Msg(..), init, subscriptions, update, view)
+module Wiggly exposing (ConfigParams, Memoized, Model, Msg(..), init, subscriptions, update, view)
 
+import Browser.Events
+import Css
 import Dict
-import Html exposing (Html, div)
-import Html.Attributes exposing (class, id)
-import Html.Events exposing (onClick)
-import Html.Keyed as Keyed
-import List.Extra as List
+import Html.Styled as Html exposing (Html, div)
+import Html.Styled.Attributes exposing (class, css, id)
+import Html.Styled.Events exposing (onClick)
+import Html.Styled.Keyed as Keyed
 import Random
 import Random.List
-import Time
-
-
-type alias Adjustments a =
-    { tl : a -> a
-    , tr : a -> a
-    , bl : a -> a
-    , br : a -> a
-    }
-
-
-type alias Config =
-    List Int
-
-
-configToRbgString : Config -> String
-configToRbgString list =
-    case list of
-        r :: g :: b :: _ ->
-            "rgb(" ++ String.fromInt r ++ "," ++ String.fromInt g ++ "," ++ String.fromInt b ++ ")"
-
-        _ ->
-            "rgb(0,0,0)"
-
-
-configToBorderStyle : Config -> List (Html.Attribute Msg)
-configToBorderStyle list =
-    case list of
-        l :: r :: t :: b :: _ ->
-            [ Html.Attributes.style "border-left-width" (String.fromInt l ++ "px")
-            , Html.Attributes.style "border-right-width" (String.fromInt r ++ "px")
-            , Html.Attributes.style "border-top-width" (String.fromInt t ++ "px")
-            , Html.Attributes.style "border-bottom-width" (String.fromInt b ++ "px")
-            ]
-
-        _ ->
-            []
+import Utils exposing (Adjustments, Config, configToBorderWidth, configToRbgString, cssStyles, randomVariables, randomizeAdjustments)
 
 
 type alias Memoized =
@@ -74,7 +39,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
             [ class "box"
             , class currentPosition
             , id pathKey
-            , Html.Attributes.style "background-color" (configToRbgString colorConfigParams.config)
+            , css [ Css.backgroundColor (configToRbgString colorConfigParams.config) ]
             ]
             []
         , colorConfigParams
@@ -85,14 +50,15 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
         let
             wrapImages subImages =
                 Keyed.node "div"
-                    ([ class "box"
-                     , class currentPosition
-                     , Html.Attributes.style "border-style" "solid"
-                     , Html.Attributes.style "border-color" (configToRbgString colorConfigParams.config)
-                     , Html.Attributes.style "background-color" (configToRbgString colorConfigParams.config)
-                     ]
-                        ++ configToBorderStyle borderConfigParams.config
-                    )
+                    [ class "box"
+                    , class currentPosition
+                    , css
+                        [ Css.borderStyle Css.solid
+                        , Css.borderColor (configToRbgString colorConfigParams.config)
+                        , Css.backgroundColor (configToRbgString colorConfigParams.config)
+                        , configToBorderWidth borderConfigParams.config
+                        ]
+                    ]
                     subImages
 
             adjustColor =
@@ -164,53 +130,11 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
         )
 
 
-randomListShuffleFunction : Int -> Random.Generator (List Int -> List Int)
-randomListShuffleFunction listLength =
-    Random.List.shuffle (List.range 0 (listLength - 1))
-        |> Random.map
-            (\listOfIndices ->
-                \listInput ->
-                    List.indexedMap
-                        (\index item ->
-                            let
-                                swapInput =
-                                    List.getAt index listOfIndices
-                                        |> Maybe.withDefault index
-                            in
-                            List.getAt swapInput listInput
-                                |> Maybe.withDefault item
-                        )
-                        listInput
-            )
-
-
-randomizeAdjustments : Int -> Random.Generator (Adjustments Config)
-randomizeAdjustments listLength =
-    let
-        randomList =
-            randomListShuffleFunction listLength
-    in
-    Random.map4 Adjustments
-        randomList
-        randomList
-        randomList
-        randomList
-
-
-randomVariables : Int -> Random.Generator Config
-randomVariables n =
-    Random.list n (Random.int 0 255)
-
-
 viewFrameworks : Model -> List ( String, Html Msg )
 viewFrameworks model =
     [ ( String.fromInt model.iteration
       , div
-            [ Html.Attributes.style "position" "absolute"
-            , Html.Attributes.style "top" "0"
-            , Html.Attributes.style "bottom" "0"
-            , Html.Attributes.style "right" "0"
-            , Html.Attributes.style "left" "0"
+            [ class "container"
             ]
             [ generateImage
                 model.colorParams
@@ -224,62 +148,12 @@ viewFrameworks model =
     ]
 
 
-cssStyles : String
-cssStyles =
-    """
-div {
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-.box {
-    height: 50%;
-    width: 50%;
-    position: absolute;
-}
-
-#container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
-.outer {
-    position: relative;
-    height: 100%;
-    width: 100%;
-}
-
-.tl {
-    top: 0;
-    left: 0;
-}
-
-.tr {
-    top: 0;
-    right: 0;
-}
-
-.bl {
-    bottom: 0;
-    left: 0;
-}
-
-.br {
-    bottom: 0;
-    right: 0;
-}
-"""
-
-
 view : Model -> Html Msg
 view model =
     div []
         [ Html.node "style" [] [ Html.text cssStyles ]
         , Keyed.node "div"
-            [ id "container"
+            [ class "container"
             , onClick
                 Randomize
             ]
@@ -310,9 +184,6 @@ init seed =
     let
         numberOfVariables =
             4
-
-        level =
-            maxLevel
 
         ( adjustments, seedAfterAdustments ) =
             Random.step (randomizeAdjustments numberOfVariables) seed
@@ -389,4 +260,4 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Time.every 300 (\_ -> RandomizeBorder)
+    Browser.Events.onAnimationFrame (\_ -> RandomizeBorder)

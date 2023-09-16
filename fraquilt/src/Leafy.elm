@@ -1,4 +1,4 @@
-module Leafy exposing (Config, ConfigParams, Memoized, Model, Msg(..), init, subscriptions, update, view)
+module Leafy exposing (ConfigParams, Memoized, Model, Msg(..), init, subscriptions, update, view)
 
 import Css
 import Dict
@@ -7,11 +7,7 @@ import Html.Styled.Attributes exposing (class, css, id)
 import Html.Styled.Events exposing (onClick)
 import Html.Styled.Keyed as Keyed
 import Random
-import Utils exposing (..)
-
-
-type alias Config =
-    List Int
+import Utils exposing (Adjustments, Config, configToBorderRadius, configToRbgString, cssStyles, randomVariables, randomizeAdjustments)
 
 
 type alias Memoized =
@@ -22,8 +18,6 @@ type alias Memoized =
             , bl : Config
             , br : Config
             }
-
-        -- , levelImages : Dict.Dict Int (List (Html Msg))
         }
 
 
@@ -41,7 +35,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
             [ class "box"
             , class currentPosition
             , id pathKey
-            , css [ Css.backgroundColor (configToRbgString colorConfigParams.config), configToBorderStyle borderConfigParams.config ]
+            , css [ Css.backgroundColor (configToRbgString colorConfigParams.config), configToBorderRadius borderConfigParams.config ]
             ]
             []
         , colorConfigParams

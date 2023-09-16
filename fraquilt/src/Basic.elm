@@ -1,37 +1,16 @@
-module Basic exposing (..)
+module Basic exposing (Model, Msg(..), init, subscriptions, update, view)
 
 import Browser.Events
-import Html exposing (Html, div)
-import Html.Attributes exposing (class, id)
-import Html.Events exposing (onClick)
-import Html.Keyed as Keyed
-import Html.Lazy
+import Css
+import Html.Styled as Html exposing (Html, div)
+import Html.Styled.Attributes exposing (class, css, id)
+import Html.Styled.Events exposing (onClick)
+import Html.Styled.Keyed as Keyed
+import Html.Styled.Lazy as Lazy
 import Json.Decode
-import List.Extra as List
 import Random
 import Task
-
-
-type alias Adjustments a =
-    { tl : a -> a
-    , tr : a -> a
-    , bl : a -> a
-    , br : a -> a
-    }
-
-
-type alias Config =
-    List Int
-
-
-configToRbgString : Config -> String
-configToRbgString list =
-    case list of
-        r :: g :: b :: _ ->
-            "rgb(" ++ String.fromInt r ++ "," ++ String.fromInt g ++ "," ++ String.fromInt b ++ ")"
-
-        _ ->
-            "rgb(0,0,0)"
+import Utils exposing (Adjustments, Config, Direction(..), configToRbgString, cssStyles, randomVariables, randomizeAdjustments)
 
 
 generateImage : Adjustments Config -> Int -> String -> String -> Config -> Html msg
@@ -41,7 +20,7 @@ generateImage adjustments level pathKey currentPosition config =
             [ class "box"
             , class currentPosition
             , id pathKey
-            , Html.Attributes.style "background-color" (configToRbgString config)
+            , css [ Css.backgroundColor (configToRbgString config) ]
             ]
             []
 
@@ -79,44 +58,6 @@ generateImage adjustments level pathKey currentPosition config =
             ]
 
 
-randomListShuffleFunction : Int -> Random.Generator (List Int -> List Int)
-randomListShuffleFunction listLength =
-    Random.list listLength (Random.int 0 (listLength - 1))
-        |> Random.map
-            (\listOfIndices ->
-                \listInput ->
-                    List.indexedMap
-                        (\index item ->
-                            let
-                                swapInput =
-                                    List.getAt index listOfIndices
-                                        |> Maybe.withDefault index
-                            in
-                            List.getAt swapInput listInput
-                                |> Maybe.withDefault item
-                        )
-                        listInput
-            )
-
-
-randomizeAdjustments : Int -> Random.Generator (Adjustments Config)
-randomizeAdjustments listLength =
-    let
-        randomList =
-            randomListShuffleFunction listLength
-    in
-    Random.map4 Adjustments
-        randomList
-        randomList
-        randomList
-        randomList
-
-
-randomVariables : Int -> Random.Generator Config
-randomVariables n =
-    Random.list n (Random.int 0 255)
-
-
 viewFrameworks : Model -> List ( String, Html Msg )
 viewFrameworks model =
     List.range 0 maxLevel
@@ -125,26 +66,24 @@ viewFrameworks model =
                 ( String.fromInt level
                 , div
                     [ id ("level-" ++ String.fromInt level)
-                    , Html.Attributes.style "opacity"
-                        (if level <= model.level then
-                            "1"
+                    , css
+                        [ Css.opacity
+                            (if level <= model.level then
+                                Css.num 1
 
-                         else
-                            "0"
-                        )
-                    , Html.Attributes.style "transition" "opacity 0.5s linear"
-                    , Html.Attributes.style "position" "absolute"
-                    , Html.Attributes.style "top" "0"
-                    , Html.Attributes.style "bottom" "0"
-                    , Html.Attributes.style "right" "0"
-                    , Html.Attributes.style "left" "0"
+                             else
+                                Css.num 0
+                            )
+                        ]
+                    , class "container"
+                    , Html.Styled.Attributes.style "transition" "opacity 0.5s linear"
                     , if level == 0 then
                         onTransitionEnd Randomize
 
                       else
                         class ""
                     ]
-                    [ Html.Lazy.lazy5 generateImage
+                    [ Lazy.lazy5 generateImage
                         model.adjustments
                         level
                         ("level-" ++ String.fromInt level)
@@ -155,61 +94,12 @@ viewFrameworks model =
             )
 
 
-cssStyles : String
-cssStyles =
-    """
-div {
-    box-sizing: border-box;
-}
-
-.box {
-    height: 50%;
-    width: 50%;
-    position: absolute;
-}
-
-#container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
-.outer {
-    position: relative;
-    height: 100%;
-    width: 100%;
-}
-
-.tl {
-    top: 0;
-    left: 0;
-}
-
-.tr {
-    top: 0;
-    right: 0;
-}
-
-.bl {
-    bottom: 0;
-    left: 0;
-}
-
-.br {
-    bottom: 0;
-    right: 0;
-}
-"""
-
-
 view : Model -> Html Msg
 view model =
     div []
         [ Html.node "style" [] [ Html.text cssStyles ]
         , Keyed.node "div"
-            [ id "container"
+            [ class "container"
             , if model.level == maxLevel then
                 onClick AnimateLevel
 
@@ -234,16 +124,6 @@ type alias Model =
     , levelAnimationDirection : Direction
     , doNextAnimationFrame : List Msg
     }
-
-
-type Direction
-    = Up
-    | Down
-    | None
-
-
-type alias Flags =
-    { randomSeed : Int }
 
 
 maxLevel : Int
@@ -282,7 +162,6 @@ init seed =
 type Msg
     = Randomize
     | AnimateLevel
-    | DoNextAnimationFrame Msg
     | GotNextAnimationFrame
 
 
@@ -366,14 +245,6 @@ update msg model =
                 , Cmd.none
                 )
 
-        DoNextAnimationFrame doMsg ->
-            ( { model
-                | doNextAnimationFrame =
-                    model.doNextAnimationFrame ++ [ doMsg ]
-              }
-            , Cmd.none
-            )
-
         GotNextAnimationFrame ->
             case model.doNextAnimationFrame of
                 first :: rest ->
@@ -387,7 +258,7 @@ update msg model =
 
 onTransitionEnd : Msg -> Html.Attribute Msg
 onTransitionEnd msg =
-    Html.Events.on "transitionend" (Json.Decode.succeed msg)
+    Html.Styled.Events.on "transitionend" (Json.Decode.succeed msg)
 
 
 subscriptions : Model -> Sub Msg
