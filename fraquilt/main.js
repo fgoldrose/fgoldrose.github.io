@@ -7680,12 +7680,6 @@ var $author$project$FadeBorders$update = F2(
 				}
 		}
 	});
-var $rtfeldman$elm_css$Css$Structure$Compatible = {$: 'Compatible'};
-var $rtfeldman$elm_css$Css$absolute = {position: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'absolute'};
-var $rtfeldman$elm_css$Css$Preprocess$ApplyStyles = function (a) {
-	return {$: 'ApplyStyles', a: a};
-};
-var $rtfeldman$elm_css$Css$batch = $rtfeldman$elm_css$Css$Preprocess$ApplyStyles;
 var $rtfeldman$elm_css$Css$Preprocess$AppendProperty = function (a) {
 	return {$: 'AppendProperty', a: a};
 };
@@ -7700,13 +7694,40 @@ var $rtfeldman$elm_css$Css$property = F2(
 var $rtfeldman$elm_css$Css$backgroundColor = function (c) {
 	return A2($rtfeldman$elm_css$Css$property, 'background-color', c.value);
 };
+var $rtfeldman$elm_css$VirtualDom$Styled$Attribute = F3(
+	function (a, b, c) {
+		return {$: 'Attribute', a: a, b: b, c: c};
+	});
+var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
+	function (key, value) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$property, key, value),
+			false,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$class = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('className');
+var $rtfeldman$elm_css$Css$Preprocess$ApplyStyles = function (a) {
+	return {$: 'ApplyStyles', a: a};
+};
+var $rtfeldman$elm_css$Css$batch = $rtfeldman$elm_css$Css$Preprocess$ApplyStyles;
 var $rtfeldman$elm_css$Css$prop1 = F2(
 	function (key, arg) {
 		return A2($rtfeldman$elm_css$Css$property, key, arg.value);
 	});
-var $rtfeldman$elm_css$Css$bottom = $rtfeldman$elm_css$Css$prop1('bottom');
-var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
-var $rtfeldman$elm_css$Css$PxUnits = {$: 'PxUnits'};
+var $rtfeldman$elm_css$Css$borderBottomLeftRadius = $rtfeldman$elm_css$Css$prop1('border-bottom-left-radius');
+var $rtfeldman$elm_css$Css$borderBottomRightRadius = $rtfeldman$elm_css$Css$prop1('border-bottom-right-radius');
+var $rtfeldman$elm_css$Css$borderTopLeftRadius = $rtfeldman$elm_css$Css$prop1('border-top-left-radius');
+var $rtfeldman$elm_css$Css$borderTopRightRadius = $rtfeldman$elm_css$Css$prop1('border-top-right-radius');
+var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
+var $rtfeldman$elm_css$Css$Structure$Compatible = {$: 'Compatible'};
 var $elm$core$String$fromFloat = _String_fromNumber;
 var $rtfeldman$elm_css$Css$Internal$lengthConverter = F3(
 	function (units, unitLabel, numericValue) {
@@ -7733,42 +7754,7 @@ var $rtfeldman$elm_css$Css$Internal$lengthConverter = F3(
 				unitLabel)
 		};
 	});
-var $rtfeldman$elm_css$Css$px = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PxUnits, 'px');
-var $author$project$Utils$blStyle = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			$rtfeldman$elm_css$Css$bottom(
-			$rtfeldman$elm_css$Css$px(0)),
-			$rtfeldman$elm_css$Css$left(
-			$rtfeldman$elm_css$Css$px(0))
-		]));
-var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
-var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
 var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
-var $rtfeldman$elm_css$Css$position = $rtfeldman$elm_css$Css$prop1('position');
-var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
-var $author$project$Utils$boxStyle = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			$rtfeldman$elm_css$Css$height(
-			$rtfeldman$elm_css$Css$pct(50)),
-			$rtfeldman$elm_css$Css$width(
-			$rtfeldman$elm_css$Css$pct(50)),
-			$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$absolute)
-		]));
-var $rtfeldman$elm_css$Css$right = $rtfeldman$elm_css$Css$prop1('right');
-var $author$project$Utils$brStyle = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			$rtfeldman$elm_css$Css$bottom(
-			$rtfeldman$elm_css$Css$px(0)),
-			$rtfeldman$elm_css$Css$right(
-			$rtfeldman$elm_css$Css$px(0))
-		]));
-var $rtfeldman$elm_css$Css$borderBottomLeftRadius = $rtfeldman$elm_css$Css$prop1('border-bottom-left-radius');
-var $rtfeldman$elm_css$Css$borderBottomRightRadius = $rtfeldman$elm_css$Css$prop1('border-bottom-right-radius');
-var $rtfeldman$elm_css$Css$borderTopLeftRadius = $rtfeldman$elm_css$Css$prop1('border-top-left-radius');
-var $rtfeldman$elm_css$Css$borderTopRightRadius = $rtfeldman$elm_css$Css$prop1('border-top-right-radius');
 var $author$project$Utils$configToBorderStyle = function (list) {
 	if (((list.b && list.b.b) && list.b.b.b) && list.b.b.b.b) {
 		var l = list.a;
@@ -7828,10 +7814,6 @@ var $author$project$Utils$configToRbgString = function (list) {
 		return A3($rtfeldman$elm_css$Css$rgb, 0, 0, 0);
 	}
 };
-var $rtfeldman$elm_css$VirtualDom$Styled$Attribute = F3(
-	function (a, b, c) {
-		return {$: 'Attribute', a: a, b: b, c: c};
-	});
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
 		any:
@@ -9329,21 +9311,6 @@ var $rtfeldman$elm_css$VirtualDom$Styled$Node = F3(
 var $rtfeldman$elm_css$VirtualDom$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$Node;
 var $rtfeldman$elm_css$Html$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$node;
 var $rtfeldman$elm_css$Html$Styled$div = $rtfeldman$elm_css$Html$Styled$node('div');
-var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
-	function (key, value) {
-		return A3(
-			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
-			A2($elm$virtual_dom$VirtualDom$property, key, value),
-			false,
-			'');
-	});
-var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			$rtfeldman$elm_css$VirtualDom$Styled$property,
-			key,
-			$elm$json$Json$Encode$string(string));
-	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$id = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('id');
 var $rtfeldman$elm_css$VirtualDom$Styled$KeyedNode = F3(
 	function (a, b, c) {
@@ -9351,23 +9318,6 @@ var $rtfeldman$elm_css$VirtualDom$Styled$KeyedNode = F3(
 	});
 var $rtfeldman$elm_css$VirtualDom$Styled$keyedNode = $rtfeldman$elm_css$VirtualDom$Styled$KeyedNode;
 var $rtfeldman$elm_css$Html$Styled$Keyed$node = $rtfeldman$elm_css$VirtualDom$Styled$keyedNode;
-var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
-var $author$project$Utils$tlStyle = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			$rtfeldman$elm_css$Css$top(
-			$rtfeldman$elm_css$Css$px(0)),
-			$rtfeldman$elm_css$Css$left(
-			$rtfeldman$elm_css$Css$px(0))
-		]));
-var $author$project$Utils$trStyle = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			$rtfeldman$elm_css$Css$top(
-			$rtfeldman$elm_css$Css$px(0)),
-			$rtfeldman$elm_css$Css$right(
-			$rtfeldman$elm_css$Css$px(0))
-		]));
 var $author$project$Leafy$generateImage = F5(
 	function (colorConfigParams, borderConfigParams, level, pathKey, currentPosition) {
 		if (!level) {
@@ -9376,16 +9326,16 @@ var $author$project$Leafy$generateImage = F5(
 					$rtfeldman$elm_css$Html$Styled$div,
 					_List_fromArray(
 						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$class('box'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$class(currentPosition),
+							$rtfeldman$elm_css$Html$Styled$Attributes$id(pathKey),
 							$rtfeldman$elm_css$Html$Styled$Attributes$css(
 							_List_fromArray(
 								[
-									$author$project$Utils$boxStyle,
-									currentPosition,
 									$rtfeldman$elm_css$Css$backgroundColor(
 									$author$project$Utils$configToRbgString(colorConfigParams.config)),
 									$author$project$Utils$configToBorderStyle(borderConfigParams.config)
-								])),
-							$rtfeldman$elm_css$Html$Styled$Attributes$id(pathKey)
+								]))
 						]),
 					_List_Nil),
 				colorConfigParams,
@@ -9397,13 +9347,13 @@ var $author$project$Leafy$generateImage = F5(
 					'div',
 					_List_fromArray(
 						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$class('box'),
+							$rtfeldman$elm_css$Html$Styled$Attributes$class(currentPosition),
 							$rtfeldman$elm_css$Html$Styled$Attributes$css(
 							_List_fromArray(
 								[
 									$rtfeldman$elm_css$Css$backgroundColor(
-									$author$project$Utils$configToRbgString(colorConfigParams.config)),
-									$author$project$Utils$boxStyle,
-									currentPosition
+									$author$project$Utils$configToRbgString(colorConfigParams.config))
 								]))
 						]),
 					subImages);
@@ -9464,7 +9414,7 @@ var $author$project$Leafy$generateImage = F5(
 					{config: adjustBorder.tl}),
 				level - 1,
 				pathKey + '-tl',
-				$author$project$Utils$tlStyle);
+				'tl');
 			var tlImage = _v0.a;
 			var colorMemoized2 = _v0.b;
 			var borderMemoized2 = _v0.c;
@@ -9478,7 +9428,7 @@ var $author$project$Leafy$generateImage = F5(
 					{config: adjustBorder.tr}),
 				level - 1,
 				pathKey + '-tr',
-				$author$project$Utils$trStyle);
+				'tr');
 			var trImage = _v1.a;
 			var colorMemoized3 = _v1.b;
 			var borderMemoized3 = _v1.c;
@@ -9492,7 +9442,7 @@ var $author$project$Leafy$generateImage = F5(
 					{config: adjustBorder.bl}),
 				level - 1,
 				pathKey + '-bl',
-				$author$project$Utils$blStyle);
+				'bl');
 			var blImage = _v2.a;
 			var colorMemoized4 = _v2.b;
 			var borderMemoized4 = _v2.c;
@@ -9506,7 +9456,7 @@ var $author$project$Leafy$generateImage = F5(
 					{config: adjustBorder.br}),
 				level - 1,
 				pathKey + '-br',
-				$author$project$Utils$brStyle);
+				'br');
 			var brImage = _v3.a;
 			var colorMemoized5 = _v3.b;
 			var borderMemoized5 = _v3.c;
@@ -9538,15 +9488,7 @@ var $author$project$Leafy$update = F2(
 			newBorderParams,
 			$author$project$Leafy$maxLevel,
 			'level-' + $elm$core$String$fromInt($author$project$Leafy$maxLevel),
-			$rtfeldman$elm_css$Css$batch(
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$absolute),
-						$rtfeldman$elm_css$Css$width(
-						$rtfeldman$elm_css$Css$pct(100)),
-						$rtfeldman$elm_css$Css$height(
-						$rtfeldman$elm_css$Css$pct(100))
-					])));
+			'outer');
 		var memoizeColors = _v3.b;
 		var memoizeBorders = _v3.c;
 		return _Utils_Tuple2(
@@ -9997,9 +9939,11 @@ var $author$project$Main$Leafy = {$: 'Leafy'};
 var $author$project$Main$Spirally = {$: 'Spirally'};
 var $author$project$Main$Wiggly = {$: 'Wiggly'};
 var $author$project$Main$Windows = {$: 'Windows'};
+var $rtfeldman$elm_css$Css$absolute = {position: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'absolute'};
 var $rtfeldman$elm_css$Css$bold = {fontWeight: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'bold'};
 var $rtfeldman$elm_css$Css$border = $rtfeldman$elm_css$Css$prop1('border');
 var $rtfeldman$elm_css$Css$borderRadius = $rtfeldman$elm_css$Css$prop1('border-radius');
+var $rtfeldman$elm_css$Css$bottom = $rtfeldman$elm_css$Css$prop1('bottom');
 var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
 var $rtfeldman$elm_css$Css$color = function (c) {
 	return A2($rtfeldman$elm_css$Css$property, 'color', c.value);
@@ -10463,6 +10407,7 @@ var $author$project$Main$isVariety = F2(
 		}
 		return false;
 	});
+var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
 var $rtfeldman$elm_css$VirtualDom$Styled$KeyedNodeNS = F4(
 	function (a, b, c, d) {
 		return {$: 'KeyedNodeNS', a: a, b: b, c: c, d: d};
@@ -10612,13 +10557,18 @@ var $rtfeldman$elm_css$Html$Styled$Events$onClick = function (msg) {
 };
 var $rtfeldman$elm_css$Css$padding = $rtfeldman$elm_css$Css$prop1('padding');
 var $rtfeldman$elm_css$Css$pointer = {cursor: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'pointer'};
+var $rtfeldman$elm_css$Css$position = $rtfeldman$elm_css$Css$prop1('position');
+var $rtfeldman$elm_css$Css$PxUnits = {$: 'PxUnits'};
+var $rtfeldman$elm_css$Css$px = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PxUnits, 'px');
 var $rtfeldman$elm_css$Css$relative = {position: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'relative'};
+var $rtfeldman$elm_css$Css$right = $rtfeldman$elm_css$Css$prop1('right');
 var $rtfeldman$elm_css$Css$sansSerif = {fontFamily: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'sans-serif'};
 var $rtfeldman$elm_css$VirtualDom$Styled$text = function (str) {
 	return $rtfeldman$elm_css$VirtualDom$Styled$Unstyled(
 		$elm$virtual_dom$VirtualDom$text(str));
 };
 var $rtfeldman$elm_css$Html$Styled$text = $rtfeldman$elm_css$VirtualDom$Styled$text;
+var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
 var $author$project$Basic$cssStyles = '\ndiv {\n    box-sizing: border-box;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n#container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
 var $elm$html$Html$node = $elm$virtual_dom$VirtualDom$node;
 var $elm$html$Html$Events$on = F2(
@@ -10933,57 +10883,7 @@ var $author$project$FadeBorders$view = function (model) {
 			]));
 };
 var $author$project$Leafy$Randomize = {$: 'Randomize'};
-var $author$project$Utils$containerStyle = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$absolute),
-			$rtfeldman$elm_css$Css$top(
-			$rtfeldman$elm_css$Css$px(0)),
-			$rtfeldman$elm_css$Css$left(
-			$rtfeldman$elm_css$Css$px(0)),
-			$rtfeldman$elm_css$Css$right(
-			$rtfeldman$elm_css$Css$px(0)),
-			$rtfeldman$elm_css$Css$bottom(
-			$rtfeldman$elm_css$Css$px(0))
-		]));
-var $author$project$Utils$outerStyle = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			$rtfeldman$elm_css$Css$position($rtfeldman$elm_css$Css$relative),
-			$rtfeldman$elm_css$Css$height(
-			$rtfeldman$elm_css$Css$pct(100)),
-			$rtfeldman$elm_css$Css$width(
-			$rtfeldman$elm_css$Css$pct(100))
-		]));
-var $author$project$Leafy$viewFrameworks = function (model) {
-	return _List_fromArray(
-		[
-			_Utils_Tuple2(
-			$elm$core$String$fromInt(model.iteration),
-			A2(
-				$rtfeldman$elm_css$Html$Styled$div,
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Html$Styled$Attributes$css(
-						_List_fromArray(
-							[$author$project$Utils$containerStyle]))
-					]),
-				_List_fromArray(
-					[
-						function (_v0) {
-						var image = _v0.a;
-						return image;
-					}(
-						A5(
-							$author$project$Leafy$generateImage,
-							model.colorParams,
-							model.borderParams,
-							$author$project$Leafy$maxLevel,
-							'level-' + $elm$core$String$fromInt($author$project$Leafy$maxLevel),
-							$author$project$Utils$outerStyle))
-					])))
-		]);
-};
+var $author$project$Utils$cssStyles = '\ndiv {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n.container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
 var $author$project$Leafy$view = function (model) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -10991,21 +10891,41 @@ var $author$project$Leafy$view = function (model) {
 		_List_fromArray(
 			[
 				A3(
+				$rtfeldman$elm_css$Html$Styled$node,
+				'style',
+				_List_Nil,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text($author$project$Utils$cssStyles)
+					])),
+				A3(
 				$rtfeldman$elm_css$Html$Styled$Keyed$node,
 				'div',
 				_List_fromArray(
 					[
-						$rtfeldman$elm_css$Html$Styled$Attributes$css(
-						_List_fromArray(
-							[$author$project$Utils$containerStyle])),
+						$rtfeldman$elm_css$Html$Styled$Attributes$class('container'),
 						$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Leafy$Randomize)
 					]),
-				$author$project$Leafy$viewFrameworks(model))
+				_List_fromArray(
+					[
+						_Utils_Tuple2(
+						$elm$core$String$fromInt(model.iteration),
+						function (_v0) {
+							var image = _v0.a;
+							return image;
+						}(
+							A5(
+								$author$project$Leafy$generateImage,
+								model.colorParams,
+								model.borderParams,
+								$author$project$Leafy$maxLevel,
+								'level-' + $elm$core$String$fromInt($author$project$Leafy$maxLevel),
+								'outer')))
+					]))
 			]));
 };
 var $author$project$Spirally$Randomize = {$: 'Randomize'};
 var $author$project$Spirally$cssStyles = '\ndiv {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n\n.box {\n    height: 50%;\n    width: 50%;\n    position: absolute;\n}\n\n#container {\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n}\n\n.outer {\n    position: relative;\n    height: 100%;\n    width: 100%;\n}\n\n.tl {\n    top: 0;\n    left: 0;\n}\n\n.tr {\n    top: 0;\n    right: 0;\n}\n\n.bl {\n    bottom: 0;\n    left: 0;\n}\n\n.br {\n    bottom: 0;\n    right: 0;\n}\n';
-var $rtfeldman$elm_css$Html$Styled$Attributes$class = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('className');
 var $elm$core$Dict$singleton = F2(
 	function (key, value) {
 		return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);

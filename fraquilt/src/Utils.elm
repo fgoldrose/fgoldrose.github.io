@@ -39,65 +39,54 @@ configToBorderStyle list =
             Css.batch []
 
 
-boxStyle : Css.Style
-boxStyle =
-    Css.batch
-        [ Css.height (Css.pct 50)
-        , Css.width (Css.pct 50)
-        , Css.position Css.absolute
-        ]
+cssStyles : String
+cssStyles =
+    """
+div {
+    box-sizing: border-box;
+    overflow: hidden;
+}
 
+.box {
+    height: 50%;
+    width: 50%;
+    position: absolute;
+}
 
-containerStyle : Css.Style
-containerStyle =
-    Css.batch
-        [ Css.position Css.absolute
-        , Css.top (Css.px 0)
-        , Css.left (Css.px 0)
-        , Css.right (Css.px 0)
-        , Css.bottom (Css.px 0)
-        ]
+.container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
 
+.outer {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
 
-outerStyle : Css.Style
-outerStyle =
-    Css.batch
-        [ Css.position Css.relative
-        , Css.height (Css.pct 100)
-        , Css.width (Css.pct 100)
-        ]
+.tl {
+    top: 0;
+    left: 0;
+}
 
+.tr {
+    top: 0;
+    right: 0;
+}
 
-tlStyle : Css.Style
-tlStyle =
-    Css.batch
-        [ Css.top (Css.px 0)
-        , Css.left (Css.px 0)
-        ]
+.bl {
+    bottom: 0;
+    left: 0;
+}
 
-
-trStyle : Css.Style
-trStyle =
-    Css.batch
-        [ Css.top (Css.px 0)
-        , Css.right (Css.px 0)
-        ]
-
-
-blStyle : Css.Style
-blStyle =
-    Css.batch
-        [ Css.bottom (Css.px 0)
-        , Css.left (Css.px 0)
-        ]
-
-
-brStyle : Css.Style
-brStyle =
-    Css.batch
-        [ Css.bottom (Css.px 0)
-        , Css.right (Css.px 0)
-        ]
+.br {
+    bottom: 0;
+    right: 0;
+}
+"""
 
 
 

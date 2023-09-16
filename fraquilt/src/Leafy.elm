@@ -1,9 +1,9 @@
-module Leafy exposing (..)
+module Leafy exposing (Config, ConfigParams, Memoized, Model, Msg(..), init, subscriptions, update, view)
 
 import Css
 import Dict
 import Html.Styled as Html exposing (Html, div)
-import Html.Styled.Attributes exposing (css, id)
+import Html.Styled.Attributes exposing (class, css, id)
 import Html.Styled.Events exposing (onClick)
 import Html.Styled.Keyed as Keyed
 import Random
@@ -34,17 +34,14 @@ type alias ConfigParams =
     }
 
 
-generateImage : ConfigParams -> ConfigParams -> Int -> String -> Css.Style -> ( Html Msg, ConfigParams, ConfigParams )
+generateImage : ConfigParams -> ConfigParams -> Int -> String -> String -> ( Html Msg, ConfigParams, ConfigParams )
 generateImage colorConfigParams borderConfigParams level pathKey currentPosition =
     if level == 0 then
         ( div
-            [ css
-                [ Utils.boxStyle
-                , currentPosition
-                , Css.backgroundColor (configToRbgString colorConfigParams.config)
-                , configToBorderStyle borderConfigParams.config
-                ]
+            [ class "box"
+            , class currentPosition
             , id pathKey
+            , css [ Css.backgroundColor (configToRbgString colorConfigParams.config), configToBorderStyle borderConfigParams.config ]
             ]
             []
         , colorConfigParams
@@ -55,11 +52,9 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
         let
             wrapImages subImages =
                 Keyed.node "div"
-                    [ css
-                        [ Css.backgroundColor (configToRbgString colorConfigParams.config)
-                        , boxStyle
-                        , currentPosition
-                        ]
+                    [ class "box"
+                    , class currentPosition
+                    , css [ Css.backgroundColor (configToRbgString colorConfigParams.config) ]
                     ]
                     subImages
 
@@ -95,7 +90,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
                     { newBorderConfigParams | config = adjustBorder.tl }
                     (level - 1)
                     (pathKey ++ "-tl")
-                    tlStyle
+                    "tl"
 
             ( trImage, colorMemoized3, borderMemoized3 ) =
                 generateImage
@@ -103,7 +98,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
                     { borderMemoized2 | config = adjustBorder.tr }
                     (level - 1)
                     (pathKey ++ "-tr")
-                    trStyle
+                    "tr"
 
             ( blImage, colorMemoized4, borderMemoized4 ) =
                 generateImage
@@ -111,7 +106,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
                     { borderMemoized3 | config = adjustBorder.bl }
                     (level - 1)
                     (pathKey ++ "-bl")
-                    blStyle
+                    "bl"
 
             ( brImage, colorMemoized5, borderMemoized5 ) =
                 generateImage
@@ -119,7 +114,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
                     { borderMemoized4 | config = adjustBorder.br }
                     (level - 1)
                     (pathKey ++ "-br")
-                    brStyle
+                    "br"
         in
         ( wrapImages
             [ ( pathKey ++ "-tl", tlImage )
@@ -160,34 +155,25 @@ randomizeBorder numberOfVariables seed =
     )
 
 
-viewFrameworks : Model -> List ( String, Html Msg )
-viewFrameworks model =
-    [ ( String.fromInt model.iteration
-      , div
-            [ css [ containerStyle ] ]
-            [ generateImage
-                model.colorParams
-                model.borderParams
-                maxLevel
-                ("level-" ++ String.fromInt maxLevel)
-                outerStyle
-                |> (\( image, _, _ ) -> image)
-            ]
-      )
-    ]
-
-
 view : Model -> Html Msg
 view model =
     div []
-        [ Keyed.node "div"
-            [ css
-                [ containerStyle
-                ]
+        [ Html.node "style" [] [ Html.text cssStyles ]
+        , Keyed.node "div"
+            [ class "container"
             , onClick
                 Randomize
             ]
-            (viewFrameworks model)
+            [ ( String.fromInt model.iteration
+              , generateImage
+                    model.colorParams
+                    model.borderParams
+                    maxLevel
+                    ("level-" ++ String.fromInt maxLevel)
+                    "outer"
+                    |> (\( image, _, _ ) -> image)
+              )
+            ]
         ]
 
 
@@ -247,16 +233,7 @@ update msg model =
                     randomizeBorder 4 seed1
 
                 ( _, memoizeColors, memoizeBorders ) =
-                    generateImage newColorParams
-                        newBorderParams
-                        maxLevel
-                        ("level-" ++ String.fromInt maxLevel)
-                        (Css.batch
-                            [ Css.position Css.absolute
-                            , Css.width (Css.pct 100)
-                            , Css.height (Css.pct 100)
-                            ]
-                        )
+                    generateImage newColorParams newBorderParams maxLevel ("level-" ++ String.fromInt maxLevel) "outer"
             in
             ( { model
                 | colorParams = memoizeColors
