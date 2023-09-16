@@ -1,4 +1,4 @@
-module Windows exposing (Adjustments, Config, ConfigParams, Direction(..), Flags, Memoized, Model, Msg(..), init, subscriptions, update, view)
+module Windows exposing (Adjustments, Config, ConfigParams, Memoized, Model, Msg(..), init, subscriptions, update, view)
 
 import Browser.Events
 import Dict
@@ -302,21 +302,11 @@ type alias Model =
     { iteration : Int
     , adjustments : Adjustments Config
     , borderAdjustments : Adjustments Config
-    , level : Int
     , initialVariables : Config
     , randomSeed : Random.Seed
     , numberOfVariables : Int -- Length of list
-    , levelAnimationDirection : Direction
     , doNextAnimationFrame : List Msg
     }
-
-
-type Direction
-    = Up
-
-
-type alias Flags =
-    { randomSeed : Int }
 
 
 maxLevel : Int
@@ -324,17 +314,11 @@ maxLevel =
     7
 
 
-init : Flags -> ( Model, Cmd Msg )
-init flags =
+init : Random.Seed -> ( Model, Cmd Msg )
+init seed =
     let
         numberOfVariables =
             4
-
-        level =
-            maxLevel
-
-        seed =
-            Random.initialSeed flags.randomSeed
 
         ( adjustments, seedAfterAdustments ) =
             Random.step (randomizeAdjustments numberOfVariables) seed
@@ -348,11 +332,9 @@ init flags =
     ( { iteration = 0
       , adjustments = adjustments
       , borderAdjustments = borderAdjustments
-      , level = level
       , initialVariables = newInitialColor
       , randomSeed = seedAfterColor
       , numberOfVariables = numberOfVariables
-      , levelAnimationDirection = Up
       , doNextAnimationFrame = []
       }
     , Cmd.none

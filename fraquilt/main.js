@@ -5282,6 +5282,15 @@ var $author$project$Main$WindowsMsg = function (a) {
 };
 var $author$project$FadeBorders$AnimateLevel = {$: 'AnimateLevel'};
 var $author$project$FadeBorders$Up = {$: 'Up'};
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $elm$random$Random$Generator = function (a) {
+	return {$: 'Generator', a: a};
+};
+var $elm$core$Bitwise$and = _Bitwise_and;
+var $elm$core$Basics$negate = function (n) {
+	return -n;
+};
 var $elm$random$Random$Seed = F2(
 	function (a, b) {
 		return {$: 'Seed', a: a, b: b};
@@ -5291,24 +5300,6 @@ var $elm$random$Random$next = function (_v0) {
 	var state0 = _v0.a;
 	var incr = _v0.b;
 	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
-};
-var $elm$random$Random$initialSeed = function (x) {
-	var _v0 = $elm$random$Random$next(
-		A2($elm$random$Random$Seed, 0, 1013904223));
-	var state1 = _v0.a;
-	var incr = _v0.b;
-	var state2 = (state1 + x) >>> 0;
-	return $elm$random$Random$next(
-		A2($elm$random$Random$Seed, state2, incr));
-};
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $elm$random$Random$Generator = function (a) {
-	return {$: 'Generator', a: a};
-};
-var $elm$core$Bitwise$and = _Bitwise_and;
-var $elm$core$Basics$negate = function (n) {
-	return -n;
 };
 var $elm$core$Bitwise$xor = _Bitwise_xor;
 var $elm$random$Random$peel = function (_v0) {
@@ -5505,8 +5496,7 @@ var $elm$random$Random$step = F2(
 		var generator = _v0.a;
 		return generator(seed);
 	});
-var $author$project$FadeBorders$init = function (flags) {
-	var seed = $elm$random$Random$initialSeed(flags.randomSeed);
+var $author$project$FadeBorders$init = function (seed) {
 	var numberOfVariables = 6;
 	var level = 0;
 	var _v0 = A2(
@@ -5535,8 +5525,6 @@ var $author$project$FadeBorders$init = function (flags) {
 		},
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Leafy$Up = {$: 'Up'};
-var $author$project$Leafy$maxLevel = 6;
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
 var $author$project$Leafy$Adjustments = F4(
@@ -5690,22 +5678,18 @@ var $author$project$Leafy$randomizeColors = F2(
 			{adjustments: adjustments, config: newInitialColor, memoized: $elm$core$Dict$empty},
 			newSeed);
 	});
-var $author$project$Leafy$init = function (flags) {
-	var seed = $elm$random$Random$initialSeed(flags.randomSeed);
+var $author$project$Leafy$init = function (randomSeed) {
 	var numberOfVariables = 4;
-	var level = $author$project$Leafy$maxLevel;
-	var _v0 = A2($author$project$Leafy$randomizeColors, numberOfVariables, seed);
+	var _v0 = A2($author$project$Leafy$randomizeColors, numberOfVariables, randomSeed);
 	var colorParams = _v0.a;
 	var seed1 = _v0.b;
 	var _v1 = A2($author$project$Leafy$randomizeBorder, 4, seed1);
 	var borderParams = _v1.a;
 	var seed2 = _v1.b;
 	return _Utils_Tuple2(
-		{borderParams: borderParams, colorParams: colorParams, doNextAnimationFrame: _List_Nil, iteration: 0, level: level, levelAnimationDirection: $author$project$Leafy$Up, numberOfVariables: numberOfVariables, randomSeed: seed2},
+		{borderParams: borderParams, colorParams: colorParams, iteration: 0, numberOfVariables: numberOfVariables, randomSeed: seed2},
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Spirally$Up = {$: 'Up'};
-var $author$project$Spirally$maxLevel = 6;
 var $author$project$Spirally$randomVariables = function (n) {
 	return A2(
 		$elm$random$Random$list,
@@ -5744,10 +5728,8 @@ var $author$project$Spirally$randomizeAdjustments = function (listLength) {
 	var randomList = $author$project$Spirally$randomListShuffleFunction(listLength);
 	return A5($elm$random$Random$map4, $author$project$Spirally$Adjustments, randomList, randomList, randomList, randomList);
 };
-var $author$project$Spirally$init = function (flags) {
-	var seed = $elm$random$Random$initialSeed(flags.randomSeed);
+var $author$project$Spirally$init = function (seed) {
 	var numberOfVariables = 7;
-	var level = $author$project$Spirally$maxLevel;
 	var _v0 = A2(
 		$elm$random$Random$step,
 		$author$project$Spirally$randomizeAdjustments(numberOfVariables),
@@ -5761,10 +5743,9 @@ var $author$project$Spirally$init = function (flags) {
 	var newInitialColor = _v1.a;
 	var seedAfterColor = _v1.b;
 	return _Utils_Tuple2(
-		{adjustments: adjustments, doNextAnimationFrame: _List_Nil, initialVariables: newInitialColor, iteration: 0, level: level, levelAnimationDirection: $author$project$Spirally$Up, numberOfVariables: numberOfVariables, randomSeed: seedAfterColor},
+		{adjustments: adjustments, initialVariables: newInitialColor, iteration: 0, numberOfVariables: numberOfVariables, randomSeed: seedAfterColor},
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Wiggly$Up = {$: 'Up'};
 var $author$project$Wiggly$maxLevel = 6;
 var $author$project$Wiggly$randomVariables = function (n) {
 	return A2(
@@ -5804,8 +5785,7 @@ var $author$project$Wiggly$randomizeAdjustments = function (listLength) {
 	var randomList = $author$project$Wiggly$randomListShuffleFunction(listLength);
 	return A5($elm$random$Random$map4, $author$project$Wiggly$Adjustments, randomList, randomList, randomList, randomList);
 };
-var $author$project$Wiggly$init = function (flags) {
-	var seed = $elm$random$Random$initialSeed(flags.randomSeed);
+var $author$project$Wiggly$init = function (seed) {
 	var numberOfVariables = 4;
 	var level = $author$project$Wiggly$maxLevel;
 	var _v0 = A2(
@@ -5835,17 +5815,12 @@ var $author$project$Wiggly$init = function (flags) {
 				memoized: $elm$core$Dict$empty
 			},
 			colorParams: {adjustments: adjustments, config: newInitialColor, memoized: $elm$core$Dict$empty},
-			doNextAnimationFrame: _List_Nil,
 			iteration: 0,
-			level: level,
-			levelAnimationDirection: $author$project$Wiggly$Up,
 			numberOfVariables: numberOfVariables,
 			randomSeed: seedAfterColor
 		},
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Windows$Up = {$: 'Up'};
-var $author$project$Windows$maxLevel = 7;
 var $author$project$Windows$randomVariables = function (n) {
 	return A2(
 		$elm$random$Random$list,
@@ -5884,10 +5859,8 @@ var $author$project$Windows$randomizeAdjustments = function (listLength) {
 	var randomList = $author$project$Windows$randomListShuffleFunction(listLength);
 	return A5($elm$random$Random$map4, $author$project$Windows$Adjustments, randomList, randomList, randomList, randomList);
 };
-var $author$project$Windows$init = function (flags) {
-	var seed = $elm$random$Random$initialSeed(flags.randomSeed);
+var $author$project$Windows$init = function (seed) {
 	var numberOfVariables = 4;
-	var level = $author$project$Windows$maxLevel;
 	var _v0 = A2(
 		$elm$random$Random$step,
 		$author$project$Windows$randomizeAdjustments(numberOfVariables),
@@ -5907,7 +5880,7 @@ var $author$project$Windows$init = function (flags) {
 	var newInitialColor = _v2.a;
 	var seedAfterColor = _v2.b;
 	return _Utils_Tuple2(
-		{adjustments: adjustments, borderAdjustments: borderAdjustments, doNextAnimationFrame: _List_Nil, initialVariables: newInitialColor, iteration: 0, level: level, levelAnimationDirection: $author$project$Windows$Up, numberOfVariables: numberOfVariables, randomSeed: seedAfterColor},
+		{adjustments: adjustments, borderAdjustments: borderAdjustments, doNextAnimationFrame: _List_Nil, initialVariables: newInitialColor, iteration: 0, numberOfVariables: numberOfVariables, randomSeed: seedAfterColor},
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Cmd$map = _Platform_map;
@@ -5920,40 +5893,49 @@ var $elm$core$Tuple$mapBoth = F3(
 			funcB(y));
 	});
 var $author$project$Main$init = F2(
-	function (variety, flags) {
+	function (variety, seed) {
 		switch (variety.$) {
 			case 'Leafy':
 				return A3(
 					$elm$core$Tuple$mapBoth,
 					$author$project$Main$LeafyModel,
 					$elm$core$Platform$Cmd$map($author$project$Main$LeafyMsg),
-					$author$project$Leafy$init(flags));
+					$author$project$Leafy$init(seed));
 			case 'Wiggly':
 				return A3(
 					$elm$core$Tuple$mapBoth,
 					$author$project$Main$WigglyModel,
 					$elm$core$Platform$Cmd$map($author$project$Main$WigglyMsg),
-					$author$project$Wiggly$init(flags));
+					$author$project$Wiggly$init(seed));
 			case 'Windows':
 				return A3(
 					$elm$core$Tuple$mapBoth,
 					$author$project$Main$WindowsModel,
 					$elm$core$Platform$Cmd$map($author$project$Main$WindowsMsg),
-					$author$project$Windows$init(flags));
+					$author$project$Windows$init(seed));
 			case 'Spirally':
 				return A3(
 					$elm$core$Tuple$mapBoth,
 					$author$project$Main$SpirallyModel,
 					$elm$core$Platform$Cmd$map($author$project$Main$SpirallyMsg),
-					$author$project$Spirally$init(flags));
+					$author$project$Spirally$init(seed));
 			default:
 				return A3(
 					$elm$core$Tuple$mapBoth,
 					$author$project$Main$FadeBordersModel,
 					$elm$core$Platform$Cmd$map($author$project$Main$FadeBordersMsg),
-					$author$project$FadeBorders$init(flags));
+					$author$project$FadeBorders$init(seed));
 		}
 	});
+var $elm$random$Random$initialSeed = function (x) {
+	var _v0 = $elm$random$Random$next(
+		A2($elm$random$Random$Seed, 0, 1013904223));
+	var state1 = _v0.a;
+	var incr = _v0.b;
+	var state2 = (state1 + x) >>> 0;
+	return $elm$random$Random$next(
+		A2($elm$random$Random$Seed, state2, incr));
+};
 var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $elm$core$Platform$Sub$map = _Platform_map;
 var $author$project$FadeBorders$GotNextAnimationFrame = {$: 'GotNextAnimationFrame'};
@@ -7315,6 +7297,25 @@ var $rtfeldman$elm_css$VirtualDom$Styled$toUnstyled = function (vdom) {
 	}
 };
 var $rtfeldman$elm_css$Html$Styled$toUnstyled = $rtfeldman$elm_css$VirtualDom$Styled$toUnstyled;
+var $author$project$Main$getRandomSeed = function (model) {
+	switch (model.$) {
+		case 'LeafyModel':
+			var subModel = model.a;
+			return subModel.randomSeed;
+		case 'WigglyModel':
+			var subModel = model.a;
+			return subModel.randomSeed;
+		case 'WindowsModel':
+			var subModel = model.a;
+			return subModel.randomSeed;
+		case 'SpirallyModel':
+			var subModel = model.a;
+			return subModel.randomSeed;
+		default:
+			var subModel = model.a;
+			return subModel.randomSeed;
+	}
+};
 var $author$project$FadeBorders$Down = {$: 'Down'};
 var $author$project$FadeBorders$None = {$: 'None'};
 var $author$project$FadeBorders$maxLevel = 7;
@@ -9281,6 +9282,7 @@ var $author$project$Leafy$generateImage = F5(
 				borderMemoized5);
 		}
 	});
+var $author$project$Leafy$maxLevel = 6;
 var $author$project$Leafy$update = F2(
 	function (msg, model) {
 		var _v1 = A2($author$project$Leafy$randomizeColors, model.numberOfVariables, model.randomSeed);
@@ -9669,7 +9671,7 @@ var $author$project$Main$update = F2(
 					return A2(
 						$author$project$Main$init,
 						variety,
-						{randomSeed: 0});
+						$author$project$Main$getRandomSeed(model));
 				case 'LeafyMsg':
 					if (_v0.b.$ === 'LeafyModel') {
 						var subMsg = _v0.a.a;
@@ -10734,6 +10736,7 @@ var $author$project$Spirally$generateImage = F6(
 			}
 		}
 	});
+var $author$project$Spirally$maxLevel = 6;
 var $author$project$Spirally$viewFrameworks = function (model) {
 	return _List_fromArray(
 		[
@@ -11048,6 +11051,7 @@ var $author$project$Windows$generateImage = F5(
 				borderMemoized5);
 		}
 	});
+var $author$project$Windows$maxLevel = 7;
 var $author$project$Windows$viewFrameworks = function (model) {
 	return _List_fromArray(
 		[
@@ -11274,7 +11278,12 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{
-		init: $author$project$Main$init($author$project$Main$FadeBorders),
+		init: function (flags) {
+			return A2(
+				$author$project$Main$init,
+				$author$project$Main$FadeBorders,
+				$elm$random$Random$initialSeed(flags.randomSeed));
+		},
 		subscriptions: $author$project$Main$subscriptions,
 		update: $author$project$Main$update,
 		view: A2($elm$core$Basics$composeR, $author$project$Main$view, $rtfeldman$elm_css$Html$Styled$toUnstyled)

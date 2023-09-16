@@ -256,17 +256,14 @@ maxLevel =
     7
 
 
-init : Flags -> ( Model, Cmd Msg )
-init flags =
+init : Random.Seed -> ( Model, Cmd Msg )
+init seed =
     let
         numberOfVariables =
             6
 
         level =
             0
-
-        seed =
-            Random.initialSeed flags.randomSeed
 
         ( adjustments, seedAfterAdustments ) =
             Random.step (randomizeAdjustments numberOfVariables) seed

@@ -7,6 +7,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events as HE
 import Leafy
+import Random
 import Spirally
 import Wiggly
 import Windows
@@ -120,31 +121,27 @@ view model =
         ]
 
 
-type alias Flags =
-    { randomSeed : Int }
-
-
-init : FraquiltVariety -> Flags -> ( Model, Cmd Msg )
-init variety flags =
+init : FraquiltVariety -> Random.Seed -> ( Model, Cmd Msg )
+init variety seed =
     case variety of
         Leafy ->
-            Leafy.init flags
+            Leafy.init seed
                 |> Tuple.mapBoth LeafyModel (Cmd.map LeafyMsg)
 
         Wiggly ->
-            Wiggly.init flags
+            Wiggly.init seed
                 |> Tuple.mapBoth WigglyModel (Cmd.map WigglyMsg)
 
         Windows ->
-            Windows.init flags
+            Windows.init seed
                 |> Tuple.mapBoth WindowsModel (Cmd.map WindowsMsg)
 
         Spirally ->
-            Spirally.init flags
+            Spirally.init seed
                 |> Tuple.mapBoth SpirallyModel (Cmd.map SpirallyMsg)
 
         FadeBorders ->
-            FadeBorders.init flags
+            FadeBorders.init seed
                 |> Tuple.mapBoth FadeBordersModel (Cmd.map FadeBordersMsg)
 
 
@@ -167,12 +164,30 @@ subscriptions model =
             FadeBorders.subscriptions subModel |> Sub.map FadeBordersMsg
 
 
+getRandomSeed : Model -> Random.Seed
+getRandomSeed model =
+    case model of
+        LeafyModel subModel ->
+            subModel.randomSeed
+
+        WigglyModel subModel ->
+            subModel.randomSeed
+
+        WindowsModel subModel ->
+            subModel.randomSeed
+
+        SpirallyModel subModel ->
+            subModel.randomSeed
+
+        FadeBordersModel subModel ->
+            subModel.randomSeed
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
         ( ChangeVariety variety, _ ) ->
-            --todo
-            init variety { randomSeed = 0 }
+            init variety (getRandomSeed model)
 
         ( LeafyMsg subMsg, LeafyModel subModel ) ->
             Leafy.update subMsg subModel
@@ -198,10 +213,18 @@ update msg model =
             ( model, Cmd.none )
 
 
+type alias Flags =
+    { randomSeed : Int }
+
+
 main : Program Flags Model Msg
 main =
     Browser.element
-        { init = init FadeBorders
+        { init =
+            \flags ->
+                flags.randomSeed
+                    |> Random.initialSeed
+                    |> init FadeBorders
         , view = view >> Html.toUnstyled
         , update = update
         , subscriptions = subscriptions

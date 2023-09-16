@@ -1,4 +1,4 @@
-module Leafy exposing (Adjustments, Config, ConfigParams, Direction(..), Flags, Memoized, Model, Msg(..), init, subscriptions, update, view)
+module Leafy exposing (Adjustments, Config, ConfigParams, Memoized, Model, Msg(..), init, subscriptions, update, view)
 
 import Css
 import Dict
@@ -284,20 +284,9 @@ type alias Model =
     { iteration : Int
     , colorParams : ConfigParams
     , borderParams : ConfigParams
-    , level : Int
     , randomSeed : Random.Seed
     , numberOfVariables : Int -- Length of list
-    , levelAnimationDirection : Direction
-    , doNextAnimationFrame : List Msg
     }
-
-
-type Direction
-    = Up
-
-
-type alias Flags =
-    { randomSeed : Int }
 
 
 maxLevel : Int
@@ -305,20 +294,14 @@ maxLevel =
     6
 
 
-init : Flags -> ( Model, Cmd Msg )
-init flags =
+init : Random.Seed -> ( Model, Cmd Msg )
+init randomSeed =
     let
         numberOfVariables =
             4
 
-        level =
-            maxLevel
-
-        seed =
-            Random.initialSeed flags.randomSeed
-
         ( colorParams, seed1 ) =
-            randomizeColors numberOfVariables seed
+            randomizeColors numberOfVariables randomSeed
 
         ( borderParams, seed2 ) =
             randomizeBorder 4 seed1
@@ -326,11 +309,8 @@ init flags =
     ( { iteration = 0
       , colorParams = colorParams
       , borderParams = borderParams
-      , level = level
       , randomSeed = seed2
       , numberOfVariables = numberOfVariables
-      , levelAnimationDirection = Up
-      , doNextAnimationFrame = []
       }
     , Cmd.none
     )

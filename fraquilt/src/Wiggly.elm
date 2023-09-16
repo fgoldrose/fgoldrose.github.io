@@ -1,4 +1,4 @@
-module Wiggly exposing (Adjustments, Config, ConfigParams, Direction(..), Flags, Memoized, Model, Msg(..), init, subscriptions, update, view)
+module Wiggly exposing (Adjustments, Config, ConfigParams, Memoized, Model, Msg(..), init, subscriptions, update, view)
 
 import Dict
 import Html exposing (Html, div)
@@ -295,20 +295,9 @@ type alias Model =
     { iteration : Int
     , colorParams : ConfigParams
     , borderParams : ConfigParams
-    , level : Int
     , randomSeed : Random.Seed
     , numberOfVariables : Int -- Length of list
-    , levelAnimationDirection : Direction
-    , doNextAnimationFrame : List Msg
     }
-
-
-type Direction
-    = Up
-
-
-type alias Flags =
-    { randomSeed : Int }
 
 
 maxLevel : Int
@@ -316,17 +305,14 @@ maxLevel =
     6
 
 
-init : Flags -> ( Model, Cmd Msg )
-init flags =
+init : Random.Seed -> ( Model, Cmd Msg )
+init seed =
     let
         numberOfVariables =
             4
 
         level =
             maxLevel
-
-        seed =
-            Random.initialSeed flags.randomSeed
 
         ( adjustments, seedAfterAdustments ) =
             Random.step (randomizeAdjustments numberOfVariables) seed
@@ -340,11 +326,8 @@ init flags =
     ( { iteration = 0
       , colorParams = { adjustments = adjustments, config = newInitialColor, memoized = Dict.empty }
       , borderParams = { adjustments = borderAdjustments, config = [ 1, 2, 3, 4 ], memoized = Dict.empty }
-      , level = level
       , randomSeed = seedAfterColor
       , numberOfVariables = numberOfVariables
-      , levelAnimationDirection = Up
-      , doNextAnimationFrame = []
       }
     , Cmd.none
     )
