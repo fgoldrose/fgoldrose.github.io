@@ -324,7 +324,7 @@ type alias Flags =
 
 maxLevel : Int
 maxLevel =
-    7
+    6
 
 
 init : Flags -> ( Model, Cmd Msg )

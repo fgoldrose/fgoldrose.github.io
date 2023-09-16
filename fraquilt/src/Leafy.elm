@@ -1,10 +1,11 @@
 module Leafy exposing (Adjustments, Config, ConfigParams, Direction(..), Flags, Memoized, Model, Msg(..), init, subscriptions, update, view)
 
+import Css
 import Dict
-import Html exposing (Html, div)
-import Html.Attributes exposing (class, id)
-import Html.Events exposing (onClick)
-import Html.Keyed as Keyed
+import Html.Styled as Html exposing (Html, div)
+import Html.Styled.Attributes exposing (css, id)
+import Html.Styled.Events exposing (onClick)
+import Html.Styled.Keyed as Keyed
 import List.Extra as List
 import Random
 import Random.List
@@ -22,24 +23,24 @@ type alias Config =
     List Int
 
 
-configToRbgString : Config -> String
+configToRbgString : Config -> Css.Color
 configToRbgString list =
     case list of
         r :: g :: b :: _ ->
-            "rgb(" ++ String.fromInt r ++ "," ++ String.fromInt g ++ "," ++ String.fromInt b ++ ")"
+            Css.rgb r g b
 
         _ ->
-            "rgb(0,0,0)"
+            Css.rgb 0 0 0
 
 
-configToBorderStyle : Config -> List (Html.Attribute Msg)
+configToBorderStyle : Config -> List Css.Style
 configToBorderStyle list =
     case list of
         l :: r :: t :: b :: _ ->
-            [ Html.Attributes.style "border-top-left-radius" (String.fromInt l ++ "%")
-            , Html.Attributes.style "border-bottom-right-radius" (String.fromInt r ++ "%")
-            , Html.Attributes.style "border-top-right-radius" (String.fromInt t ++ "%")
-            , Html.Attributes.style "border-bottom-left-radius" (String.fromInt b ++ "%")
+            [ Css.borderTopLeftRadius (Css.pct (toFloat l))
+            , Css.borderBottomRightRadius (Css.pct (toFloat r))
+            , Css.borderTopRightRadius (Css.pct (toFloat t))
+            , Css.borderBottomLeftRadius (Css.pct (toFloat b))
             ]
 
         _ ->
@@ -66,17 +67,21 @@ type alias ConfigParams =
     }
 
 
-generateImage : ConfigParams -> ConfigParams -> Int -> String -> String -> ( Html Msg, ConfigParams, ConfigParams )
+generateImage : ConfigParams -> ConfigParams -> Int -> String -> Css.Style -> ( Html Msg, ConfigParams, ConfigParams )
 generateImage colorConfigParams borderConfigParams level pathKey currentPosition =
     if level == 0 then
         ( div
-            ([ class "box"
-             , class currentPosition
-             , id pathKey
-             , Html.Attributes.style "background-color" (configToRbgString colorConfigParams.config)
-             ]
-                ++ configToBorderStyle borderConfigParams.config
-            )
+            [ css
+                ([ Css.position Css.absolute
+                 , Css.width (Css.pct 50)
+                 , Css.height (Css.pct 50)
+                 , currentPosition
+                 , Css.backgroundColor (configToRbgString colorConfigParams.config)
+                 ]
+                    ++ configToBorderStyle borderConfigParams.config
+                )
+            , id pathKey
+            ]
             []
         , colorConfigParams
         , borderConfigParams
@@ -86,9 +91,13 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
         let
             wrapImages subImages =
                 Keyed.node "div"
-                    [ class "box"
-                    , class currentPosition
-                    , Html.Attributes.style "background-color" (configToRbgString colorConfigParams.config)
+                    [ css
+                        [ Css.backgroundColor (configToRbgString colorConfigParams.config)
+                        , Css.position Css.absolute
+                        , Css.width (Css.pct 50)
+                        , Css.height (Css.pct 50)
+                        , currentPosition
+                        ]
                     ]
                     subImages
 
@@ -124,7 +133,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
                     { newBorderConfigParams | config = adjustBorder.tl }
                     (level - 1)
                     (pathKey ++ "-tl")
-                    "tl"
+                    (Css.batch [ Css.top (Css.px 0), Css.left (Css.px 0) ])
 
             ( trImage, colorMemoized3, borderMemoized3 ) =
                 generateImage
@@ -132,7 +141,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
                     { borderMemoized2 | config = adjustBorder.tr }
                     (level - 1)
                     (pathKey ++ "-tr")
-                    "tr"
+                    (Css.batch [ Css.top (Css.px 0), Css.right (Css.px 0) ])
 
             ( blImage, colorMemoized4, borderMemoized4 ) =
                 generateImage
@@ -140,7 +149,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
                     { borderMemoized3 | config = adjustBorder.bl }
                     (level - 1)
                     (pathKey ++ "-bl")
-                    "bl"
+                    (Css.batch [ Css.bottom (Css.px 0), Css.left (Css.px 0) ])
 
             ( brImage, colorMemoized5, borderMemoized5 ) =
                 generateImage
@@ -148,7 +157,7 @@ generateImage colorConfigParams borderConfigParams level pathKey currentPosition
                     { borderMemoized4 | config = adjustBorder.br }
                     (level - 1)
                     (pathKey ++ "-br")
-                    "br"
+                    (Css.batch [ Css.bottom (Css.px 0), Css.right (Css.px 0) ])
         in
         ( wrapImages
             [ ( pathKey ++ "-tl", tlImage )
@@ -231,80 +240,35 @@ viewFrameworks : Model -> List ( String, Html Msg )
 viewFrameworks model =
     [ ( String.fromInt model.iteration
       , div
-            [ Html.Attributes.style "position" "absolute"
-            , Html.Attributes.style "top" "0"
-            , Html.Attributes.style "bottom" "0"
-            , Html.Attributes.style "right" "0"
-            , Html.Attributes.style "left" "0"
-            ]
+            [ css [ Css.position Css.absolute, Css.top (Css.px 0), Css.left (Css.px 0), Css.bottom (Css.px 0), Css.right (Css.px 0) ] ]
             [ generateImage
                 model.colorParams
                 model.borderParams
                 maxLevel
                 ("level-" ++ String.fromInt maxLevel)
-                "outer"
+                (Css.batch
+                    [ Css.position Css.absolute
+                    , Css.width (Css.pct 100)
+                    , Css.height (Css.pct 100)
+                    ]
+                )
                 |> (\( image, _, _ ) -> image)
             ]
       )
     ]
 
 
-cssStyles : String
-cssStyles =
-    """
-div {
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-.box {
-    height: 50%;
-    width: 50%;
-    position: absolute;
-}
-
-#container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
-.outer {
-    position: relative;
-    height: 100%;
-    width: 100%;
-}
-
-.tl {
-    top: 0;
-    left: 0;
-}
-
-.tr {
-    top: 0;
-    right: 0;
-}
-
-.bl {
-    bottom: 0;
-    left: 0;
-}
-
-.br {
-    bottom: 0;
-    right: 0;
-}
-"""
-
-
 view : Model -> Html Msg
 view model =
     div []
-        [ Html.node "style" [] [ Html.text cssStyles ]
-        , Keyed.node "div"
-            [ id "container"
+        [ Keyed.node "div"
+            [ css
+                [ Css.position Css.absolute
+                , Css.top (Css.px 0)
+                , Css.left (Css.px 0)
+                , Css.bottom (Css.px 0)
+                , Css.right (Css.px 0)
+                ]
             , onClick
                 Randomize
             ]
@@ -388,7 +352,16 @@ update msg model =
                     randomizeBorder 4 seed1
 
                 ( _, memoizeColors, memoizeBorders ) =
-                    generateImage newColorParams newBorderParams maxLevel ("level-" ++ String.fromInt maxLevel) "outer"
+                    generateImage newColorParams
+                        newBorderParams
+                        maxLevel
+                        ("level-" ++ String.fromInt maxLevel)
+                        (Css.batch
+                            [ Css.position Css.absolute
+                            , Css.width (Css.pct 100)
+                            , Css.height (Css.pct 100)
+                            ]
+                        )
             in
             ( { model
                 | colorParams = memoizeColors

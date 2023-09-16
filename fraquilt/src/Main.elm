@@ -1,8 +1,11 @@
 module Main exposing (Flags, Model(..), Msg(..), main)
 
 import Browser
+import Css
 import FadeBorders
-import Html exposing (Html)
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes exposing (css)
+import Html.Styled.Events as HE
 import Leafy
 import Spirally
 import Wiggly
@@ -26,7 +29,8 @@ type Model
 
 
 type Msg
-    = LeafyMsg Leafy.Msg
+    = ChangeVariety FraquiltVariety
+    | LeafyMsg Leafy.Msg
     | WigglyMsg Wiggly.Msg
     | WindowsMsg Windows.Msg
     | SpirallyMsg Spirally.Msg
@@ -35,21 +39,85 @@ type Msg
 
 view : Model -> Html Msg
 view model =
-    case model of
-        LeafyModel subModel ->
-            Leafy.view subModel |> Html.map LeafyMsg
+    let
+        controls =
+            Html.div
+                [ css
+                    [ Css.displayFlex
+                    , Css.flexDirection Css.column
+                    , Css.padding (Css.px 10)
+                    , Css.backgroundColor (Css.hex "000000")
+                    , Css.fontFamily Css.sansSerif
+                    , Css.fontWeight Css.bold
+                    , Css.color (Css.hex "ffffff")
+                    ]
+                ]
+                (Html.div
+                    [ css [ Css.marginBottom (Css.px 10) ] ]
+                    [ Html.text "Change variety:" ]
+                    :: List.map
+                        (\( variety, label ) ->
+                            Html.button
+                                [ css
+                                    [ Css.backgroundColor (Css.hex "333333")
+                                    , Css.color (Css.hex "ffffff")
+                                    , Css.padding (Css.px 10)
+                                    , Css.hover [ Css.backgroundColor (Css.hex "444444") ]
+                                    , Css.border (Css.px 0)
+                                    , Css.cursor Css.pointer
+                                    , Css.borderRadius (Css.px 8)
+                                    , Css.marginBottom (Css.px 10)
+                                    ]
+                                , HE.onClick (ChangeVariety variety)
+                                ]
+                                [ Html.text label ]
+                        )
+                        [ ( Leafy, "Leafy" )
+                        , ( Wiggly, "Wiggly" )
+                        , ( Windows, "Windows" )
+                        , ( Spirally, "Spirally" )
+                        , ( FadeBorders, "Fade Borders" )
+                        ]
+                )
 
-        WigglyModel subModel ->
-            Wiggly.view subModel |> Html.map WigglyMsg
+        mainImage =
+            case model of
+                LeafyModel subModel ->
+                    Leafy.view subModel |> Html.map LeafyMsg
 
-        WindowsModel subModel ->
-            Windows.view subModel |> Html.map WindowsMsg
+                WigglyModel subModel ->
+                    Wiggly.view subModel |> Html.fromUnstyled |> Html.map WigglyMsg
 
-        SpirallyModel subModel ->
-            Spirally.view subModel |> Html.map SpirallyMsg
+                WindowsModel subModel ->
+                    Windows.view subModel |> Html.fromUnstyled |> Html.map WindowsMsg
 
-        FadeBordersModel subModel ->
-            FadeBorders.view subModel |> Html.map FadeBordersMsg
+                SpirallyModel subModel ->
+                    Spirally.view subModel |> Html.fromUnstyled |> Html.map SpirallyMsg
+
+                FadeBordersModel subModel ->
+                    FadeBorders.view subModel |> Html.fromUnstyled |> Html.map FadeBordersMsg
+    in
+    Html.div
+        [ css
+            [ Css.displayFlex
+            , Css.flexDirection Css.row
+            , Css.position Css.absolute
+            , Css.top (Css.px 0)
+            , Css.left (Css.px 0)
+            , Css.right (Css.px 0)
+            , Css.bottom (Css.px 0)
+            ]
+        ]
+        [ controls
+        , Html.div
+            [ css
+                [ Css.position Css.relative
+                , Css.flexGrow (Css.num 1)
+                , Css.cursor Css.pointer
+                ]
+            ]
+            [ mainImage ]
+        ]
 
 
 type alias Flags =
@@ -102,6 +170,10 @@ subscriptions model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
+        ( ChangeVariety variety, _ ) ->
+            --todo
+            init variety { randomSeed = 0 }
+
         ( LeafyMsg subMsg, LeafyModel subModel ) ->
             Leafy.update subMsg subModel
                 |> Tuple.mapBoth LeafyModel (Cmd.map LeafyMsg)
@@ -130,7 +202,7 @@ main : Program Flags Model Msg
 main =
     Browser.element
         { init = init FadeBorders
-        , view = view
+        , view = view >> Html.toUnstyled
         , update = update
         , subscriptions = subscriptions
         }
